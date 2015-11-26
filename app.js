@@ -2,34 +2,23 @@ var http = require('http')
 var path = require('path')
 var config = require('./config')
 var commonJS = require('./base/commonJS')
-var mkCSS = require('./base/mkCSS')
-var mkHtml = require('./base/mkHtml')
 
 function onRequest(req, res){
 	var hostname = req.headers.host
 	var filename = req.url 
 
-	var content = '' 
+	var hostPath = path.join(config.path.root, config.virtualHost[hostname])
 
 	switch(path.extname(filename)){
 		case '.js' : 
-			content = commonJS(filename, hostname)
-			break;
-
-		case '.css' :
-			content = mkCSS(filename, hostname)
-			break;
-
-		case '.html' :
-			content = mkHtml(filename, hostname)
+			res.end(commonJS(filename, hostPath))
 			break;
 
 		default :
+			res.end('')
 			break;
-
 	}
 
-	res.end(content)
 }
 
 http.createServer(onRequest).listen(config.etc.onPort || 80)

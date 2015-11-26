@@ -1,9 +1,3 @@
 {
-	"root":"../",
-	"views":"views",
-	"src":"src",
-	"dist":"dist",
-	"tag":"tag",
-	"less":"less",
-	"css":"css"
+	"root":"../"
 }
