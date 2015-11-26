@@ -8,23 +8,20 @@ var mkHtml = require('./base/mkHtml')
 function onRequest(req, res){
 	var hostname = req.headers.host
 	var filename = req.url 
-	var modelName = config.virtualHost[hostname]
-
-	console.log(modelName, filename)
 
 	var content = '' 
 
 	switch(path.extname(filename)){
 		case '.js' : 
-			content = commonJS(filename, modelName)
+			content = commonJS(filename, hostname)
 			break;
 
 		case '.css' :
-			content = mkCSS(filename, modelName)
+			content = mkCSS(filename, hostname)
 			break;
 
 		case '.html' :
-			content = mkHtml(filename, modelName)
+			content = mkHtml(filename, hostname)
 			break;
 
 		default :

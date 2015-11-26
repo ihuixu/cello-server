@@ -9,9 +9,10 @@ var tagName = path.parse(config.path.tag).name
 
 var loader = fs.readFileSync('./lib/loader.js', 'utf8')  
 
-module.exports = function(urlpath, modelName){
+module.exports = function(urlpath, hostname){
 	var modPath = getName(urlpath)
 	var type = getType(urlpath)
+	var modelName = config.virtualHost[hostname]
 
 	switch(type){
 		case srcName : 
@@ -73,7 +74,9 @@ module.exports = function(urlpath, modelName){
 			tags += createTag(depend)
 		})
 		tags += createTag(modPath)
-		var jsfile = 'document.write(\'' + tags + '\');' + 'var tag = document.getElementById("tag:' + modPath + '");tag.parentNode.removeChild(tag);'
+		var jsfile = 'document.write(\'' + tags + '\');' + 'var tag = document.getElementById("tag:' + modPath + '");'
+//			+ 'tag.parentNode.removeChild(tag);'
+
 		return UglifyJS.minify(jsfile, {fromString: true}).code
 	}
 
@@ -114,34 +117,39 @@ module.exports = function(urlpath, modelName){
 		return depends
 	}
 
-}
 
-function getType(urlpath){
-	return urlpath.split(path.sep)[1]
-}
-function getName(urlpath){
-	var reg = new RegExp('^(\/' + getType(urlpath) + '\/)|(\.js)$', 'g')
-	return urlpath.replace(reg, '')
-}
-
-function tagAttr(modName, main){
-	var attr = {
-		src : '/' + config.path.src + '/' + modName + '.js'
+	function getType(urlpath){
+		return urlpath.split(path.sep)[1]
 	}
-	main && (attr.main = main)
-	return attr 
+	function getName(urlpath){
+		var reg = new RegExp('^(\/' + getType(urlpath) + '\/)|(\.js)$', 'g')
+		return urlpath.replace(reg, '')
+	}
+
+	function tagAttr(modName, main){
+		if(!path.extname(modName))
+			modName += '.js'
+			
+		var modPath = path.join(hostname, config.path.src, modName)
+		var attr = {
+			src : 'http://' + modPath 
+		}
+		main && (attr.main = main)
+		return attr 
+	}
+	function createTag(modName, main){
+		var attr = tagAttr(modName, main)
+		var tag = '<script'
+		tag += ' src="' + attr.src + '"'
+
+		if(attr.main)
+			tag += ' data-main="' + attr.main + '"'
+
+		tag += '></script>'
+
+		return tag 
+	}
+
+
+
 }
-function createTag(modName, main){
-	var attr = tagAttr(modName, main)
-	var tag = '<script'
-	tag += ' src="' + attr.src + '"'
-	if(attr.main)
-		tag += ' data-main="' + attr.main + '"'
-
-	tag += '></script>'
-
-	return tag 
-}
-
-
-

@@ -8,7 +8,8 @@ function jsMod(urlpath){
 	return '<script id="tag:' + urlpath + '" src="/tag/' + urlpath + '.js"></script>'
 }
 
-module.exports = function(urlpath, modelName){
+module.exports = function(urlpath, hostname){
+	var modelName = config.virtualHost[hostname]
 	var filepath = path.join(config.path.root, modelName, config.path.views, urlpath)
 	var tpl = fs.readFileSync(filepath, 'utf8')  
 
