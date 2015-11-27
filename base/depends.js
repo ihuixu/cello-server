@@ -1,30 +1,33 @@
 var path = require('path')
 var fs = require('fs')
 
-module.exports = depends
-
-function depends(srcPath, mainPath){
-
+module.exports = function(srcPath, mainPath){
+	var mainSource = getSource(mainPath)
 	var depends = []
-		, finaljs = []
+		, code = []
 
-	return getDepends(mainPath)	
+	getDepends(mainPath, mainSource)	
 
-	function getDepends(modPath){
-		var source = getSource(modPath)
-		var jsLine = source.split('\n')
+	depends.push(mainPath)
+	code.push(mainSource)
+
+	return {'depends':depends ,'code':code.join('\n')}
+
+
+	function getDepends(modPath, modSource){
+		var jsLine = modSource.split('\n')
 		var reg = /\brequire\b/
 
 		function require(modName){
 			if (modName === modPath){
-				grunt.log.errorlns('Error File "' + modPath + '" 调用自身.');
+				console.log('Error File "' + modPath + '" 调用自身.');
 				return;
 			}
 
 			if (modName && depends.indexOf(modName) == -1){
 				depends.push(modName)
-				finaljs.push(getContent(modName, source))
-				getDepends(modName)
+				code.push(getContent(modName, modSource))
+				getDepends(modName, getSource(modName))
 			}
 		}
 
@@ -43,8 +46,6 @@ function depends(srcPath, mainPath){
 			}
 
 		})
-
-		return {depends:depends,code:finaljs.join('\n')}
 	}
 
 	function getSource(modPath){
@@ -59,22 +60,21 @@ function depends(srcPath, mainPath){
 		return fs.readFileSync(filepath, 'utf8')
 	}
 
-	function getContent(modPath, source){
+	function getContent(modPath, modSource){
 		switch(path.extname(modPath)){
 			case '.vue' : 
-				return source 
+				return modSource 
 				break;
 
 			default : 
 				var jsfile = [
 					'define("' + modPath + '",function(require, exports){'
-					, source 
+					, modSource 
 					, '});'
 				]
 				return jsfile.join('\n')
 				break;
 		}
 	}
-
 
 } 
