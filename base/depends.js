@@ -1,15 +1,17 @@
 var path = require('path')
 var fs = require('fs')
+var file = require('./file')
 
 module.exports = function(srcPath, mainPath){
-	var mainSource = getSource(mainPath)
+	var filePath = path.join(srcPath, mainPath)
+	var mainSource = file.getSource(filePath)
 	var depends = []
 		, code = []
 
 	getDepends(mainPath, mainSource)	
 
 	depends.push(mainPath)
-	code.push(getContent(mainPath, mainSource))
+	code.push(file.getContent(mainPath, mainSource))
 
 	return {'depends':depends ,'code':code.join('\n')}
 
@@ -26,9 +28,10 @@ module.exports = function(srcPath, mainPath){
 
 			if (modName && depends.indexOf(modName) == -1){
 				depends.push(modName)
-				var source = getSource(modName)
-				code.push(getContent(modName, source))
-				getDepends(modName, getSource(modName))
+				var filePath = path.join(srcPath, modName)
+				var source = file.getSource(filePath)
+				code.push(file.getContent(modName, source))
+				getDepends(modName, source)
 			}
 		}
 
@@ -48,34 +51,5 @@ module.exports = function(srcPath, mainPath){
 
 		})
 	}
-
-	function getSource(modPath){
-		if(!path.extname(modPath))
-			modPath += '.js'
-
-		var filepath = path.join(srcPath, modPath)
-
-		if(!fs.existsSync(filepath))
-			return ''
-
-		return fs.readFileSync(filepath, 'utf8')
-	}
-
-	function getContent(modPath, modSource){
-		switch(path.extname(modPath)){
-			case '.vue' : 
-				return modSource 
-				break;
-
-			default : 
-				var jsfile = [
-					'define("' + modPath + '",function(require, exports){'
-					, modSource 
-					, '});'
-				]
-				return jsfile.join('\n')
-				break;
-		}
-	}
-
+	
 } 
