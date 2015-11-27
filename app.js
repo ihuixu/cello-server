@@ -1,17 +1,23 @@
 var http = require('http')
 var path = require('path')
 var config = require('./config')
-var commonJS = require('./base/commonJS')
+var commonjs = require('./base/commonjs')
+var vuejs = require('./base/vuejs')
 
 function onRequest(req, res){
-	var hostname = req.headers.host
-	var filename = req.url 
+	var hostPath = path.join(config.path.root, config.virtualHost[req.headers.host])
 
-	var hostPath = path.join(config.path.root, config.virtualHost[hostname])
+	var fileArray = req.url.split(path.sep)
+	var fileType = fileArray.splice(0,2).join('/')
+	var fileName = fileArray.join('/')
 
-	switch(path.extname(filename)){
-		case '.js' : 
-			res.end(commonJS(filename, hostPath))
+	switch(fileType){
+		case '/dist' : 
+			res.end(commonjs(fileName, hostPath))
+			break;
+
+		case '/components' : 
+			res.end(vuejs(fileName, hostPath))
 			break;
 
 		default :
