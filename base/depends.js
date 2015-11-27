@@ -9,7 +9,7 @@ module.exports = function(srcPath, mainPath){
 	getDepends(mainPath, mainSource)	
 
 	depends.push(mainPath)
-	code.push(mainSource)
+	code.push(getContent(mainPath, mainSource))
 
 	return {'depends':depends ,'code':code.join('\n')}
 
@@ -26,7 +26,8 @@ module.exports = function(srcPath, mainPath){
 
 			if (modName && depends.indexOf(modName) == -1){
 				depends.push(modName)
-				code.push(getContent(modName, modSource))
+				var source = getSource(modName)
+				code.push(getContent(modName, source))
 				getDepends(modName, getSource(modName))
 			}
 		}

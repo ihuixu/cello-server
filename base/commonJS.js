@@ -28,6 +28,7 @@ module.exports = function(urlpath, hostPath){
 		for(var i in configs){
 			(function(i){
 			 var configname = configs[i]
+
 			 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
 
 			 config[configname.replace('.json', '')] = JSON.parse(content)
@@ -38,6 +39,7 @@ module.exports = function(urlpath, hostPath){
 		var srcPath = path.join(hostPath, config.path.src)
 		var jsfile = depends(srcPath, modName).code
 
+		//return jsfile
 		return UglifyJS.minify(jsfile, {fromString: true}).code
 
 	}
