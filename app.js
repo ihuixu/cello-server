@@ -34,19 +34,28 @@ function onRequest(req, res){
 		if(fs.existsSync(configPath))
 			configs = fs.readdirSync(configPath)
 
-		for(var i in configs){
-			(function(i){
-			 var configname = configs[i]
+			for(var i in configs){
+				(function(i){
+				 var configname = configs[i]
+				 var name = configname.replace('.json','') 
+				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
+				 var obj = JSON.parse(content)
 
-			 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
+				 if(!config[hostname][name])
+				 config[hostname][name] = {}
 
-			 config[hostname][configname.replace('.json', '')] = JSON.parse(content)
+				 for(var i in obj){
+				 config[hostname][name][i] = obj[i]
+				 }
 
-			 })(i);
-		}
+				 })(i);
+			}
 	}
 
+	console.log(config[hostname].path)
+
 	var srcPath = path.join(hostPath, config[hostname].path.src)
+		, componentsPath = path.join(hostPath, config[hostname].path.components)
 
 	switch(fileType){
 		case '/dist' : 
@@ -69,14 +78,9 @@ function onRequest(req, res){
 			var modName = getName(filePath)
 			var jsfile = ''
 
-			if(modName == 'loader'){
-				jsfile = UglifyJS.minify(loader, {fromString: true}).code
+			jsfile = vueJS(componentsPath, modName).code
 
-			}else{
-				jsfile = vueJS(srcPath, modName).code
-
-				//jsfile = UglifyJS.minify(jsfile, {fromString: true}).code
-			}
+			//jsfile = UglifyJS.minify(jsfile, {fromString: true}).code
 
 			res.end(jsfile)
 			break;
