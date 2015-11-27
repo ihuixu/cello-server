@@ -52,8 +52,6 @@ function onRequest(req, res){
 			}
 	}
 
-	console.log(config[hostname].path)
-
 	var srcPath = path.join(hostPath, config[hostname].path.src)
 		, componentsPath = path.join(hostPath, config[hostname].path.components)
 
