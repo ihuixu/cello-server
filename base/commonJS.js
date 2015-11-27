@@ -1,48 +1,55 @@
 var path = require('path')
 var fs = require('fs')
-var UglifyJS = require("uglify-js");
-var depends = require('./depends')
+var file = require('./file')
 
-var loader = fs.readFileSync('./lib/loader.js', 'utf8')  
+module.exports = function(srcPath, mainPath){
+	var filePath = path.join(srcPath, mainPath)
+	var mainSource = file.getSource(filePath)
+	var depends = []
+		, code = []
 
-module.exports = function(modName, hostPath){
+	getDepends(mainPath, mainSource)	
 
-	if(modName == 'loader')
-		return UglifyJS.minify(loader, {fromString: true}).code
+	depends.push(mainPath)
+	code.push(file.getContent(mainPath, mainSource))
 
-	if(fs.existsSync(hostPath)){
-		var configPath = path.join(hostPath, 'config')
-		var config = {
-			path:{
-				"src":"./src/",
-				"dist":"./dist/"
+	return {'depends':depends ,'code':code.join('\n')}
+
+
+	function getDepends(modPath, modSource){
+		var jsLine = modSource.split('\n')
+		var reg = /\brequire\b/
+
+		function require(modName){
+			if (modName === modPath){
+				console.log('Error File "' + modPath + '" 调用自身.');
+				return;
+			}
+
+			if (modName && depends.indexOf(modName) == -1){
+				depends.push(modName)
+				var filePath = path.join(srcPath, modName)
+				var source = file.getSource(filePath)
+				code.push(file.getContent(modName, source))
+				getDepends(modName, source)
 			}
 		}
 
-		var configs = {}
+		jsLine.forEach(function(line){
+			if (!reg.test(line))
+				return
 
-		if(fs.existsSync(configPath))
-			configs = fs.readdirSync(configPath)
+			line = line.replace(/,/g , ';')
 
-		for(var i in configs){
-			(function(i){
-			 var configname = configs[i]
+			try {
+				var evaFn = new Function('require' , line)
+				evaFn(require)
 
-			 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
+			}catch(err){
+				console.log(err, line)
+			}
 
-			 config[configname.replace('.json', '')] = JSON.parse(content)
-
-			 })(i);
-		}
-
-		var srcPath = path.join(hostPath, config.path.src)
-		var jsfile = depends(srcPath, modName).code
-
-		return jsfile
-		//return UglifyJS.minify(jsfile, {fromString: true}).code
-
+		})
 	}
-
-	return ''
-}
-
+	
+} 
