@@ -4,7 +4,7 @@ var path = require('path')
 var UglifyJS = require("uglify-js");
 var config = require('./config')
 var commonJS = require('./base/commonJS')
-var vuejs = require('./base/vuejs')
+var vueJS = require('./base/vueJS')
 
 function getName(urlpath){
 	var reg = new RegExp('^(\/dist\/)|(\.js)$', 'g')
@@ -66,7 +66,19 @@ function onRequest(req, res){
 			break;
 
 		case '/components' : 
-			res.end(vuejs(filePath, srcPath))
+			var modName = getName(filePath)
+			var jsfile = ''
+
+			if(modName == 'loader'){
+				jsfile = UglifyJS.minify(loader, {fromString: true}).code
+
+			}else{
+				jsfile = vueJS(srcPath, modName).code
+
+				//jsfile = UglifyJS.minify(jsfile, {fromString: true}).code
+			}
+
+			res.end(jsfile)
 			break;
 
 		default :
