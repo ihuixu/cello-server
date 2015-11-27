@@ -78,8 +78,6 @@ function onRequest(req, res){
 
 			jsfile = vueJS(componentsPath, modName).code
 
-			//jsfile = UglifyJS.minify(jsfile, {fromString: true}).code
-
 			res.end(jsfile)
 			break;
 

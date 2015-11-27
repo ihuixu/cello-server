@@ -21,6 +21,7 @@ module.exports = function(srcPath, mainPath){
 		var reg = /\brequire\b/
 
 		function require(modName){
+			console.log(modName)
 			if (modName === modPath){
 				console.log('Error File "' + modPath + '" 调用自身.');
 				return;
@@ -42,6 +43,7 @@ module.exports = function(srcPath, mainPath){
 			line = line.replace(/,/g , ';')
 
 			try {
+				console.log(line)
 				var evaFn = new Function('require' , line)
 				evaFn(require)
 
@@ -51,5 +53,4 @@ module.exports = function(srcPath, mainPath){
 
 		})
 	}
-	
 } 

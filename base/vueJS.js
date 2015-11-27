@@ -2,54 +2,65 @@ var path = require('path')
 var fs = require('fs')
 var file = require('./file')
 
+var filePath = '/Users/xuhui/xiaoyemian/static/components/a.vue'
+var mainSource = file.getSource(filePath)
+
+getBlock(mainSource)
+
+function getBlock(mainSource){
+	var tags = ['style', 'template', 'script']
+	var blocks = {}
+	tags.map(function(v){
+		blocks[v] = []
+	})
+
+	var blockReg = new RegExp('(\/?)('+ tags.join('|') + ')', 'i')
+	var tagReg = new RegExp('<' + '(\/?)('+ tags.join('|') + ')' + '(.*?)>', 'ig')
+
+	var jsLine = mainSource.split('\n')
+	var state = ''
+	var source = [] 
+
+	jsLine.forEach(function(line){
+		var tags = line.match(tagReg)
+		if(tags){
+			var content = line.replace(tagReg, '')
+			tags.map(function(tag){
+				var blockArray = tag.match(blockReg)
+				var name = blockArray[2]
+				state = blockArray[1] ? 'end' : 'start'
+
+				if(state == 'start'){
+					content && source.push(content)
+				}
+
+				if(state == 'end'){
+					blocks[name].push({
+						'source' : source.join('\n')
+					})
+					source = [] 
+				}
+
+			})
+
+		}else{
+			if(state == 'start'){
+				source.push(line)
+			}
+		}
+	})
+
+	console.log(blocks)
+}
+
+
 module.exports = function(srcPath, mainPath){
 	var filePath = path.join(srcPath, mainPath)
 	var mainSource = file.getSource(filePath)
-	var depends = []
-		, code = []
-
-	getDepends(mainPath, mainSource)	
-
-	depends.push(mainPath)
-	code.push(file.getContent(mainPath, mainSource))
-
-	return {'depends':depends ,'code':code.join('\n')}
 
 
-	function getDepends(modPath, modSource){
-		var jsLine = modSource.split('\n')
-		var reg = /\brequire\b/
+	return {'source': getBlock(mainSource)}
 
-		function require(modName){
-			if (modName === modPath){
-				console.log('Error File "' + modPath + '" 调用自身.');
-				return;
-			}
-
-			if (modName && depends.indexOf(modName) == -1){
-				depends.push(modName)
-				var filePath = path.join(srcPath, modName)
-				var source = file.getSource(filePath)
-				code.push(file.getContent(modName, source))
-				getDepends(modName, source)
-			}
-		}
-
-		jsLine.forEach(function(line){
-			if (!reg.test(line))
-				return
-
-			line = line.replace(/,/g , ';')
-
-			try {
-				var evaFn = new Function('require' , line)
-				evaFn(require)
-
-			}catch(err){
-				console.log(err, line)
-			}
-
-		})
-	}
-	
 } 
+
+
