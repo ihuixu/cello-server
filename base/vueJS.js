@@ -2,55 +2,44 @@ var path = require('path')
 var fs = require('fs')
 var file = require('./file')
 
+var tags = ['style', 'template', 'script']
+
 var filePath = '/Users/xuhui/xiaoyemian/static/components/a.vue'
 var mainSource = file.getSource(filePath)
 
 getBlock(mainSource)
 
 function getBlock(mainSource){
-	var tags = ['style', 'template', 'script']
-	var blocks = {}
-	tags.map(function(v){
-		blocks[v] = []
+	var code = {}
+	var blockReg = new RegExp('<(' + tags.join('|') + ')(.*?)>((\n|.)*?)<\/(' + tags.join('|') + ')>', 'ig')
+	var tagReg = new RegExp('<(' + tags.join('|') + ')(.*?)>', 'i')
+	var contentReg = new RegExp('<(\/?)('+ tags.join('|') + ')(.*?)>', 'ig')
+
+	var blocks = mainSource.match(blockReg)
+	blocks.map(function(block){
+		var tagArray = block.match(tagReg)
+		var name = tagArray[1]
+		var opts = tagArray[2].split(' ')
+
+		opts.map(function(attr){
+			if(!attr) return;
+
+			console.log(attr)
+		})
+
+		console.log(name, opts)
+
+
+		
+
+		!code[name] && (code[name]=[]);
+		code[name].push({
+			'content':block.replace(contentReg, '')
+		})
+
 	})
 
-	var blockReg = new RegExp('(\/?)('+ tags.join('|') + ')', 'i')
-	var tagReg = new RegExp('<' + '(\/?)('+ tags.join('|') + ')' + '(.*?)>', 'ig')
-
-	var jsLine = mainSource.split('\n')
-	var state = ''
-	var source = [] 
-
-	jsLine.forEach(function(line){
-		var tags = line.match(tagReg)
-		if(tags){
-			var content = line.replace(tagReg, '')
-			tags.map(function(tag){
-				var blockArray = tag.match(blockReg)
-				var name = blockArray[2]
-				state = blockArray[1] ? 'end' : 'start'
-
-				if(state == 'start'){
-					content && source.push(content)
-				}
-
-				if(state == 'end'){
-					blocks[name].push({
-						'source' : source.join('\n')
-					})
-					source = [] 
-				}
-
-			})
-
-		}else{
-			if(state == 'start'){
-				source.push(line)
-			}
-		}
-	})
-
-	console.log(blocks)
+	console.log(code)
 }
 
 
@@ -59,7 +48,7 @@ module.exports = function(srcPath, mainPath){
 	var mainSource = file.getSource(filePath)
 
 
-	return {'source': getBlock(mainSource)}
+	return {'code': getBlock(mainSource)}
 
 } 
 
