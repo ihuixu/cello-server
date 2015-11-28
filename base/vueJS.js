@@ -23,20 +23,20 @@ function getBlock(mainSource){
 
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
+		var tagname = blockArray[1]
 		var attrs = blockArray[2].match(new RegExp(attrRegStr, 'ig'))
-		var source = {
-			'content' : blockArray[3]
-		}	
+		var content = blockArray[3]
+		var source = { 'content' : content }	
 
 		attrs && attrs.map(function(attr){
 			var opts = new Function('var opts={};opts.' + (/=/.test(attr) ? attr : attr+'=true') + ';return opts;')()
 			source = objectAssign(opts, source)
 		})
 
-		code[blockArray[1]].push(source)
+		code[tagname].push(source)
 	})
 
-	//console.log(code)
+	console.log(code)
 	return code;
 }
 
