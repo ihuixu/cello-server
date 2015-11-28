@@ -5,6 +5,11 @@ var objectAssign = require('object-assign');
 
 var tags = ['style', 'template', 'script']
 
+var filePath = '/Users/xuhui/xiaoyemian/static/components/a.vue'
+var mainSource = file.getSource(filePath)
+getBlock(mainSource)
+
+
 function getBlock(mainSource){
 	var code = {}
 	tags.map(function(tagname){
@@ -32,10 +37,11 @@ function getBlock(mainSource){
 
 		source.content = block.replace(contentReg, '')
 		
-		code[tagname] && code[tagname].push(source)
+		code[tagname].push(source)
 
 	})
 
+	//console.log(code)
 	return code;
 }
 
@@ -46,12 +52,5 @@ module.exports = function(srcPath, mainPath){
 
 	return {'code': getBlock(mainSource)}
 } 
-
-
-/*
-var filePath = '/Users/xuhui/xiaoyemian/static/components/a.vue'
-var mainSource = file.getSource(filePath)
-getBlock(mainSource)
-*/
 
 
