@@ -78,7 +78,7 @@ function onRequest(req, res){
 
 			jsfile = vueJS(componentsPath, modName).code
 
-			res.end(jsfile)
+			res.end(JSON.stringify(jsfile))
 			break;
 
 		default :
