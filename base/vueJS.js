@@ -4,13 +4,13 @@ var file = require('./file')
 var objectAssign = require('object-assign');
 
 var tags = ['style', 'template', 'script']
-
 var blockRegArray = [] 
 tags.map(function(tagname){
 	blockRegArray.push('<(\\b' + tagname + '\\b)(.*?)>((\\n|.)*?)<\\/\\b(' + tagname + ')\\b>')
 })
 var blockRegStr = blockRegArray.join('|')
 var attrRegStr = '(\\S+)=("[^"]*"|\'[^\']*\'|(\\S+))?|(\\S+)'
+
 
 function getBlock(mainSource){
 	var code = {}
@@ -19,7 +19,6 @@ function getBlock(mainSource){
 	})
 
 	var blocks = mainSource.match(new RegExp(blockRegStr, 'ig')) 
-
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
 		var type = blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))
@@ -34,7 +33,7 @@ function getBlock(mainSource){
 				return;
 
 			var opts = new Function('var opts={};opts.' + (/=/.test(attr) ? attr : attr+'=true') + ';return opts;')()
-			source = objectAssign(opts, source)
+			source = objectAssign(source, opts)
 		})
 
 		code[tagname].push(source)

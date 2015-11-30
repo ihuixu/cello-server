@@ -5,6 +5,7 @@ var UglifyJS = require("uglify-js");
 var config = require('./config')
 var commonJS = require('./base/commonJS')
 var vueJS = require('./base/vueJS')
+var objectAssign = require('object-assign');
 
 function getName(urlpath){
 	var reg = new RegExp('^(\/dist\/)|(\.js)$', 'g')
@@ -41,12 +42,7 @@ function onRequest(req, res){
 				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
 				 var obj = JSON.parse(content)
 
-				 if(!config[hostname][name])
-				 config[hostname][name] = {}
-
-				 for(var i in obj){
-				 config[hostname][name][i] = obj[i]
-				 }
+				 config[hostname][name] = objectAssign(config[hostname][name], obj)
 
 				 })(i);
 			}
