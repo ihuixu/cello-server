@@ -5,13 +5,12 @@ var objectAssign = require('object-assign');
 
 var tags = ['style', 'template', 'script']
 
-var blockRegStr = '<(\\b' + tags.join('|') + '\\b)(.*?)>((\\n|.)*?)<\\/\\b(' + tags.join('|') + ')\\b>'
+var blockRegArray = [] 
+tags.map(function(tagname){
+	blockRegArray.push('<(\\b' + tagname + '\\b)(.*?)>((\\n|.)*?)<\\/\\b(' + tagname + ')\\b>')
+})
+var blockRegStr = blockRegArray.join('|')
 var attrRegStr = '(\\S+)=("[^"]*"|\'[^\']*\'|(\\S+))?|(\\S+)'
-
-var filePath = '/Users/xuhui/xiaoyemian/static/components/a.vue'
-var mainSource = file.getSource(filePath)
-getBlock(mainSource)
-
 
 function getBlock(mainSource){
 	var code = {}
@@ -23,23 +22,27 @@ function getBlock(mainSource){
 
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
-		var tagname = blockArray[1]
-		var attrs = blockArray[2].match(new RegExp(attrRegStr, 'ig'))
-		var content = blockArray[3]
+		var type = blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))
+
+		var tagname = blockArray[1+type*5]
+		var attrs = blockArray[2+type*5].match(new RegExp(attrRegStr, 'ig'))
+		var content = blockArray[3+type*5]
 		var source = { 'content' : content }	
 
 		attrs && attrs.map(function(attr){
+			if((/=(?!")/i).test(attr))
+				return;
+
 			var opts = new Function('var opts={};opts.' + (/=/.test(attr) ? attr : attr+'=true') + ';return opts;')()
 			source = objectAssign(opts, source)
 		})
 
 		code[tagname].push(source)
 	})
-
 	console.log(code)
+
 	return code;
 }
-
 
 module.exports = function(srcPath, mainPath){
 	var filePath = path.join(srcPath, mainPath)
