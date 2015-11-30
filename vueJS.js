@@ -1,8 +1,9 @@
 var path = require('path')
 var fs = require('fs')
-var objectAssign = require('object-assign');
+var less = require('less')
+var objectAssign = require('object-assign')
 var file = require('./base/file')
-var component = require('./base/component')
+var Promise = require('bluebird')
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
@@ -11,36 +12,86 @@ var defaultLang = {
   script: 'js'
 }
 
-module.exports = function(srcPath, mainPath){
-	var filePath = path.join(srcPath, mainPath)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = function(hostPath, mainPath, config){
+	var componentsPath = path.join(hostPath, config.path.components)
+		, lessPath = path.join(hostPath, config.path.less)
+
+	var filePath = path.join(componentsPath, mainPath)
 	var mainSource = file.getSource(filePath)
 
 	var name = getName(mainPath)
 	var tags = getTags(mainSource) 
 
-	var code
+	var code = {}
 
-	for(var name in tags){
-		var blocks = tags[name]
+	for(var tagname in tags){
+		var blocks = tags[tagname]
 		blocks.map(function(block){
-			var lang = block['lang'] || defaultLang[name]
-			console.log(name, block)
-			console.log(lang)
+			var lang = block.lang || defaultLang[tagname]
+			var scoped = block.scoped || false
+			var content = block.content
+			var type = tagname
 
+			switch(lang){
+				case 'less' :
+					less.render(content, {
+						paths:[lessPath]
+						, compress:true
+					}, function(error, output){
+						if(error){
+						}
 
-			switch(name){
-				case 'style' :
+						var style = scoped
+							? '['+ name+']{' + output.css + '}'
+							: output.css
+
+						console.log(333)
+					})
+				
+					console.log(111)
 					break;
 
 				default:
+					console.log(222)
 					break;
 			}
 
 		})
 	}
 
-	return {'code':tags}
+	console.log(code)
+
+	return {'code':code}
 } 
+
+function addStyle(css){
+	var style = document.createElement("style")
+	style.type = 'text/css'
+
+	if(style.styleSheet){
+		style.styleSheet.cssText = css;
+
+	}else{
+		style.appendChild(document.createTextNode(css));
+	}
+
+	document.getElementsByTagName("head")[0].appendChild(style)
+}
 
 function getTags(mainSource){
 	var tags = {}
@@ -56,11 +107,13 @@ function getTags(mainSource){
 	var blocks = mainSource.match(new RegExp(blockRegStr, 'ig')) 
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
-		var type = blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))
+		var type = (blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))) *5
 
-		var name = blockArray[1+type*5]
-		var attrs = blockArray[2+type*5].match(new RegExp(attrRegStr, 'ig'))
-		var content = blockArray[3+type*5]
+		
+
+		var name = blockArray[1+type]
+		var attrs = blockArray[2+type].match(new RegExp(attrRegStr, 'ig'))
+		var content = blockArray[3+type]
 		var source = { 'content' : content }	
 
 		attrs && attrs.map(function(attr){

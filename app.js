@@ -24,6 +24,7 @@ function onRequest(req, res){
 		path:{
 			"src":"./src/",
 			"dist":"./dist/",
+			"less":"./less/",
 			"components":"./components/"
 		}
 	}
@@ -49,7 +50,6 @@ function onRequest(req, res){
 	}
 
 	var srcPath = path.join(hostPath, config[hostname].path.src)
-		, componentsPath = path.join(hostPath, config[hostname].path.components)
 
 	switch(fileType){
 		case '/dist' : 
@@ -72,7 +72,7 @@ function onRequest(req, res){
 			var modName = getName(filePath)
 			var jsfile = ''
 
-			jsfile = vueJS(componentsPath, modName).code
+			jsfile = vueJS(hostPath, modName, config[hostname]).code
 
 			res.end(JSON.stringify(jsfile))
 			break;
