@@ -13,9 +13,11 @@ exports.getSource = function(filePath){
 
 exports.getContent = function(modPath, modSource){
 		switch(path.extname(modPath)){
+/*
 			case '.vue' : 
 				return modSource 
 				break;
+*/
 
 			default : 
 				var jsfile = [

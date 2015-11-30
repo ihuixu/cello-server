@@ -1,6 +1,6 @@
 var path = require('path')
 var fs = require('fs')
-var file = require('./file')
+var file = require('./base/file')
 
 module.exports = function(srcPath, mainPath){
 	var filePath = path.join(srcPath, mainPath)

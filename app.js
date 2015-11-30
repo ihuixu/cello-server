@@ -3,8 +3,8 @@ var fs = require('fs')
 var path = require('path')
 var UglifyJS = require("uglify-js");
 var config = require('./config')
-var commonJS = require('./base/commonJS')
-var vueJS = require('./base/vueJS')
+var commonJS = require('./commonJS')
+var vueJS = require('./vueJS')
 var objectAssign = require('object-assign');
 
 function getName(urlpath){
