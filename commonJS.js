@@ -3,18 +3,14 @@ var fs = require('fs')
 var file = require('./base/file')
 
 module.exports = function(srcPath, mainPath){
-	var filePath = path.join(srcPath, mainPath)
-	var mainSource = file.getSource(filePath)
+	var mainFilepath = path.join(srcPath, mainPath)
+	var mainSource = file.getSource(mainFilepath)
 	var depends = []
-		, code = []
-
+	var code = []
 	getDepends(mainPath, mainSource)	
 
 	depends.push(mainPath)
 	code.push(file.getContent(mainPath, mainSource))
-
-	return {'depends':depends ,'code':code.join('\n')}
-
 
 	function getDepends(modPath, modSource){
 		var jsLine = modSource.split('\n')
@@ -29,8 +25,8 @@ module.exports = function(srcPath, mainPath){
 
 			if (modName && depends.indexOf(modName) == -1){
 				depends.push(modName)
-				var filePath = path.join(srcPath, modName)
-				var source = file.getSource(filePath)
+				var filepath = path.join(srcPath, modName)
+				var source = file.getSource(filepath)
 				code.push(file.getContent(modName, source))
 				getDepends(modName, source)
 			}
@@ -53,4 +49,6 @@ module.exports = function(srcPath, mainPath){
 
 		})
 	}
+
+	return {'depends':depends ,'code':code.join('\n')}
 } 

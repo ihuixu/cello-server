@@ -18,7 +18,7 @@ module.exports = function(lessPath, content, scoped, name){
 						? '['+ name+']{' + output.css + '}'
 						: output.css
 
-				resolve('<style "text/css">' + style + '</style>');
+				resolve(style);
 			}
 		})
 

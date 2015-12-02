@@ -7,6 +7,11 @@ var commonJS = require('./commonJS')
 var vueJS = require('./vueJS')
 var objectAssign = require('object-assign');
 
+var defaultJS = {
+	loader : fs.readFileSync('./lib/loader.js', 'utf8')
+	, vue : fs.readFileSync('./lib/vue.js', 'utf8')
+}
+
 function getName(urlpath){
 	var reg = new RegExp('^(\/dist\/)|(\.js)$', 'g')
 	return urlpath.replace(reg, '')
@@ -49,32 +54,24 @@ function onRequest(req, res){
 			}
 	}
 
+	var modName = getName(filePath)
 	var srcPath = path.join(hostPath, config[hostname].path.src)
 
 	switch(fileType){
 		case '/dist' : 
-			var modName = getName(filePath)
-			var jsfile = ''
-
-			if(modName == 'loader'){
-				jsfile = UglifyJS.minify(loader, {fromString: true}).code
-
-			}else{
-				jsfile = commonJS(srcPath, modName).code
-
-				//jsfile = UglifyJS.minify(jsfile, {fromString: true}).code
-			}
+			var jsfile = defaultJS[modName]
+									? defaultJS[modName]
+									: commonJS(srcPath, modName).code
 
 			res.end(jsfile)
+//			res.end(UglifyJS.minify(jsfile, {fromString: true}).code)
+
 			break;
 
 		case '/components' : 
-			var modName = getName(filePath)
-			var jsfile = ''
-
-			jsfile = vueJS(hostPath, modName, config[hostname]).code
-
-			res.end(JSON.stringify(jsfile))
+			vueJS(hostPath, modName, config[hostname], function(component){
+				res.end(component.join('\n'))
+			})
 			break;
 
 		default :

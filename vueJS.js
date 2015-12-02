@@ -1,117 +1,53 @@
 var path = require('path')
 var fs = require('fs')
-var objectAssign = require('object-assign')
 var Promise = require('bluebird')
-var file = require('./base/file')
-var less = require('./base/less')
-var ejs = require('./base/ejs')
+var getComponent = require('./base/getComponent')
 
 var tagnames = ['style', 'template', 'script']
-var defaultLang = {
-  template: 'ejs',
-  style: 'less',
-  script: 'js'
-}
 
-module.exports = function(hostPath, mainPath, config){
-	var code = {}
-	var list = getList(hostPath, mainPath, config)
+module.exports = function(hostPath, mainPath, config, cbk){
+	var coms = getComponent(hostPath, mainPath, config)
 
-	Promise.all(list).then(function(res){
-		console.log(res)	
+	var getComs = new Promise(function(resolve, reject) {
+		var len = 0
+		var code = []
+
+		function done(){
+			if(len) return;
+
+			resolve(code);
+		}
+
+		for(var tagname in coms){
+			len++
+			(function(tagname){
+				
+				Promise.all(coms[tagname]).then(function(res){
+					len--
+					var content = res.join('\n')
+					console.log(tagname, content)	
+
+					switch(tagname){
+						case 'style' : 
+							var style = 'var addStyle = require("addStyle");'
+										+ 'addStyle(\"' + content + '\");'
+
+							code.push(style)
+							break;
+
+						default:
+							break;
+					}
+
+					done()
+
+				})
+			})(tagname)
+		}
+
 	})
 
-	return {'code':code}
+	Promise.all(getComs).then(cbk)
 } 
-
-function getList(hostPath, mainPath, config){
-	var componentsPath = path.join(hostPath, config.path.components)
-		, lessPath = path.join(hostPath, config.path.less)
-
-	var filePath = path.join(componentsPath, mainPath)
-	var mainSource = file.getSource(filePath)
-
-	var name = getName(mainPath)
-	var tags = getTags(mainSource) 
-
-	var list = []
-
-	for(var tagname in tags){
-		var blocks = tags[tagname]
-		blocks.map(function(block){
-			var lang = block.lang || defaultLang[tagname]
-			var scoped = block.scoped || false
-			var content = block.content
-
-			switch(lang){
-				case 'less' :
-					list.push(less(lessPath, content, scoped, name))
-					break;
-
-				default:
-					break;
-			}
-
-		})
-	}
-	
-	return list
-}
-
-function addStyle(css){
-	var style = document.createElement("style")
-	style.type = 'text/css'
-
-	if(style.styleSheet){
-		style.styleSheet.cssText = css;
-
-	}else{
-		style.appendChild(document.createTextNode(css));
-	}
-
-	document.getElementsByTagName("head")[0].appendChild(style)
-}
-
-function getTags(mainSource){
-	var tags = {}
-	var blockRegArray = [] 
-
-	tagnames.map(function(name){
-		tags[name] = []
-		blockRegArray.push('<(\\b' + name + '\\b)(.*?)>((\\n|.)*?)<\\/\\b(' + name + ')\\b>')
-	})
-	var blockRegStr = blockRegArray.join('|')
-	var attrRegStr = '(\\S+)=("[^"]*"|\'[^\']*\'|(\\S+))?|(\\S+)'
-
-	var blocks = mainSource.match(new RegExp(blockRegStr, 'ig')) 
-	blocks && blocks.map(function(block){
-		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
-		var type = (blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))) *5
-
-		
-
-		var name = blockArray[1+type]
-		var attrs = blockArray[2+type].match(new RegExp(attrRegStr, 'ig'))
-		var content = blockArray[3+type]
-		var source = { 'content' : content }	
-
-		attrs && attrs.map(function(attr){
-			if((/=(?!")/i).test(attr))
-				return;
-
-			var opts = new Function('var opts={};opts.' + (/=/.test(attr) ? attr : attr+'=true') + ';return opts;')()
-			source = objectAssign(source, opts)
-		})
-
-		tags[name].push(source)
-	})
-
-	return tags
-}
-
-function getName(mainPath){
-	return mainPath
-}
-
 
 
