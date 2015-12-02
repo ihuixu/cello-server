@@ -1,9 +1,10 @@
 var path = require('path')
 var fs = require('fs')
-var less = require('less')
 var objectAssign = require('object-assign')
-var file = require('./base/file')
 var Promise = require('bluebird')
+var file = require('./base/file')
+var less = require('./base/less')
+var ejs = require('./base/ejs')
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
@@ -12,22 +13,18 @@ var defaultLang = {
   script: 'js'
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module.exports = function(hostPath, mainPath, config){
+	var code = {}
+	var list = getList(hostPath, mainPath, config)
+
+	Promise.all(list).then(function(res){
+		console.log(res)	
+	})
+
+	return {'code':code}
+} 
+
+function getList(hostPath, mainPath, config){
 	var componentsPath = path.join(hostPath, config.path.components)
 		, lessPath = path.join(hostPath, config.path.less)
 
@@ -37,7 +34,7 @@ module.exports = function(hostPath, mainPath, config){
 	var name = getName(mainPath)
 	var tags = getTags(mainSource) 
 
-	var code = {}
+	var list = []
 
 	for(var tagname in tags){
 		var blocks = tags[tagname]
@@ -45,39 +42,21 @@ module.exports = function(hostPath, mainPath, config){
 			var lang = block.lang || defaultLang[tagname]
 			var scoped = block.scoped || false
 			var content = block.content
-			var type = tagname
 
 			switch(lang){
 				case 'less' :
-					less.render(content, {
-						paths:[lessPath]
-						, compress:true
-					}, function(error, output){
-						if(error){
-						}
-
-						var style = scoped
-							? '['+ name+']{' + output.css + '}'
-							: output.css
-
-						console.log(333)
-					})
-				
-					console.log(111)
+					list.push(less(lessPath, content, scoped, name))
 					break;
 
 				default:
-					console.log(222)
 					break;
 			}
 
 		})
 	}
-
-	console.log(code)
-
-	return {'code':code}
-} 
+	
+	return list
+}
 
 function addStyle(css){
 	var style = document.createElement("style")
