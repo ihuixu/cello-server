@@ -5,10 +5,10 @@ var getComponent = require('./base/getComponent')
 
 var tagnames = ['style', 'template', 'script']
 
-module.exports = function(config, hostPath, mainPath, cbk){
+module.exports = function(config, hostPath, mainPath){
 	var coms = getComponent(config, hostPath, mainPath)
 
-	var getComs = new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var len = 0
 		var code = []
 
@@ -47,7 +47,6 @@ module.exports = function(config, hostPath, mainPath, cbk){
 
 	})
 
-	Promise.all(getComs).then(cbk)
 } 
 
 

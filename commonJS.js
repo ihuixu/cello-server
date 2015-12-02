@@ -4,12 +4,12 @@ var file = require('./base/file')
 var vueJS = require('./vueJS')
 var Promise = require('bluebird')
 
-module.exports = function(config, hostPath, mainPath, cbk){
+module.exports = function(config, hostPath, mainPath){
 	var srcPath = path.join(hostPath, config.path.src)
 	var mainFilepath = path.join(srcPath, mainPath)
 	var mainSource = file.getSource(mainFilepath)
 
-	var getDeps = new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var depends = []
 		var code = []
 		len = 0
@@ -39,9 +39,9 @@ module.exports = function(config, hostPath, mainPath, cbk){
 					depends.push(modName)
 					switch(path.extname(modName)){
 						case '.vue':
-
-							vueJS(config, hostPath, modName, function(component){
-								var source = component.join('\n')
+							var getComs = vueJS(config, hostPath, modName)
+							Promise.all(getComs).then(function(source){
+								source = source.join('\n')
 								code.push(file.getContent(modName, source))
 								getDepends(modName, source)
 								len--
@@ -80,9 +80,5 @@ module.exports = function(config, hostPath, mainPath, cbk){
 			})
 		}
 
-
 	})
-
-	Promise.all(getDeps).then(cbk)
-
 } 
