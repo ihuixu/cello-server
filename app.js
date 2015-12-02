@@ -5,7 +5,6 @@ var UglifyJS = require("uglify-js");
 var config = require('./config')
 var commonJS = require('./commonJS')
 var vueJS = require('./vueJS')
-var Promise = require('bluebird')
 var objectAssign = require('object-assign');
 
 var defaultJS = {
@@ -65,8 +64,7 @@ function onRequest(req, res){
 				
 			}
 
-			var getDeps = commonJS(config[hostname], hostPath, modName)
-			Promise.all(getDeps).then(function(source){
+			commonJS(config[hostname], hostPath, modName).then(function(source){
 				source = source.join('\n')
 				res.end(source)
 //			res.end(UglifyJS.minify(source, {fromString: true}).code)
@@ -75,8 +73,7 @@ function onRequest(req, res){
 			break;
 
 		case '/components' : 
-			var getComs = vueJS(config[hostname], hostPath, modName)
-			Promise.all(getComs).then(function(source){
+			vueJS(config[hostname], hostPath, modName).then(function(source){
 				source = source.join('\n')
 				res.end(source)
 			})

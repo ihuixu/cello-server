@@ -46,6 +46,10 @@ module.exports = function(config, hostPath, mainPath){
 	return component 
 }
 
+function getName(mainPath){
+	return mainPath
+}
+
 function getTags(mainSource){
 	var tags = {}
 	var blockRegArray = [] 
@@ -82,10 +86,4 @@ function getTags(mainSource){
 
 	return tags
 }
-
-function getName(mainPath){
-	return mainPath
-}
-
-
 

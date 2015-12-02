@@ -45,8 +45,7 @@ module.exports = function(config, hostPath, mainPath){
 
 					switch(path.extname(modName)){
 						case '.vue':
-							var getComs = vueJS(config, hostPath, modName)
-							Promise.all(getComs).then(function(source){
+							vueJS(config, hostPath, modName).then(function(source){
 								source = source.join('\n')
 								code.push(file.getContent(modName, source))
 								getDepends(modName, source)
