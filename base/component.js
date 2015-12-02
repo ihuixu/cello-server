@@ -2,7 +2,7 @@ var path = require('path')
 var fs = require('fs')
 var objectAssign = require('object-assign')
 var file = require('./file')
-var getLess = require('./getLess')
+var less = require('./less')
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
@@ -32,8 +32,8 @@ module.exports = function(config, hostPath, mainPath){
 
 			switch(lang){
 				case 'less' :
-					var less = getLess(lessPath, content, scoped, name)
-					component[tagname].push(less)
+					var les = less(lessPath, content, scoped, name)
+					component[tagname].push(les)
 					break;
 
 				default:

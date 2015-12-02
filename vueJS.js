@@ -1,12 +1,12 @@
 var path = require('path')
 var fs = require('fs')
 var Promise = require('bluebird')
-var getComponent = require('./base/getComponent')
+var component = require('./base/component')
 
 var tagnames = ['style', 'template', 'script']
 
 module.exports = function(config, hostPath, mainPath){
-	var coms = getComponent(config, hostPath, mainPath)
+	var coms = component(config, hostPath, mainPath)
 
 	return new Promise(function(resolve, reject) {
 		var len = 0
@@ -29,8 +29,8 @@ module.exports = function(config, hostPath, mainPath){
 					switch(tagname){
 						case 'style' : 
 							var style = []
-							style.push('var addStyle = require("loadStyle").addStyle;')
-							style.push('addStyle("' + content + '");')
+							style.push('var loadStyle = require("loadStyle");')
+							style.push('loadStyle.addStyle("' + content + '");')
 
 							code.push(style.join('\n'))
 							break;

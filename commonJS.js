@@ -4,6 +4,11 @@ var vueJS = require('./vueJS')
 var Promise = require('bluebird')
 var file = require('./base/file')
 
+var defaultJS = {
+	vue : fs.readFileSync('./lib/vue.js', 'utf8')
+	, loadStyle : fs.readFileSync('./lib/loadStyle.js', 'utf8')
+}
+
 module.exports = function(config, hostPath, mainPath){
 	var srcPath = path.join(hostPath, config.path.src)
 	var mainFilepath = path.join(srcPath, mainPath)
@@ -37,6 +42,7 @@ module.exports = function(config, hostPath, mainPath){
 				if (modName && depends.indexOf(modName) == -1){
 					len++
 					depends.push(modName)
+
 					switch(path.extname(modName)){
 						case '.vue':
 							var getComs = vueJS(config, hostPath, modName)
@@ -50,8 +56,10 @@ module.exports = function(config, hostPath, mainPath){
 							break;
 
 						default:
-							var filepath = path.join(srcPath, modName)
-							var source = file.getSource(filepath)
+							var source = defaultJS[modName]
+												? defaultJS[modName]
+												: file.getSource(path.join(srcPath, modName))
+
 							code.push(file.getContent(modName, source))
 							getDepends(modName, source)
 							len--
