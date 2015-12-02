@@ -29,7 +29,7 @@ module.exports = function(config, hostPath, mainPath){
 					switch(tagname){
 						case 'style' : 
 							var style = []
-							style.push('var addStyle = require("addStyle");')
+							style.push('var addStyle = require("loadStyle").addStyle;')
 							style.push('addStyle("' + content + '");')
 
 							code.push(style.join('\n'))

@@ -1,8 +1,8 @@
 var path = require('path')
 var fs = require('fs')
-var file = require('./base/file')
 var vueJS = require('./vueJS')
 var Promise = require('bluebird')
+var file = require('./base/file')
 
 module.exports = function(config, hostPath, mainPath){
 	var srcPath = path.join(hostPath, config.path.src)
@@ -49,7 +49,6 @@ module.exports = function(config, hostPath, mainPath){
 							})
 							break;
 
-
 						default:
 							var filepath = path.join(srcPath, modName)
 							var source = file.getSource(filepath)
@@ -82,3 +81,4 @@ module.exports = function(config, hostPath, mainPath){
 
 	})
 } 
+
