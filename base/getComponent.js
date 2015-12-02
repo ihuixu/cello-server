@@ -11,7 +11,7 @@ var defaultLang = {
   script: 'js'
 }
 
-module.exports = function(hostPath, mainPath, config){
+module.exports = function(config, hostPath, mainPath){
 	var componentsPath = path.join(hostPath, config.path.components)
 		, lessPath = path.join(hostPath, config.path.less)
 

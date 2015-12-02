@@ -1,54 +1,88 @@
 var path = require('path')
 var fs = require('fs')
 var file = require('./base/file')
+var vueJS = require('./vueJS')
+var Promise = require('bluebird')
 
-module.exports = function(srcPath, mainPath){
+module.exports = function(config, hostPath, mainPath, cbk){
+	var srcPath = path.join(hostPath, config.path.src)
 	var mainFilepath = path.join(srcPath, mainPath)
 	var mainSource = file.getSource(mainFilepath)
-	var depends = []
-	var code = []
-	getDepends(mainPath, mainSource)	
 
-	depends.push(mainPath)
-	code.push(file.getContent(mainPath, mainSource))
+	var getDeps = new Promise(function(resolve, reject) {
+		var depends = []
+		var code = []
+		len = 0
 
-	function getDepends(modPath, modSource){
-		var jsLine = modSource.split('\n')
-		var reg = /\brequire\b/
+		getDepends(mainPath, mainSource)	
 
-		function require(modName){
-			console.log(modName)
-			if (modName === modPath){
-				console.log('Error File "' + modPath + '" 调用自身.');
-				return;
-			}
+		function done(){
+			if(len) return;
 
-			if (modName && depends.indexOf(modName) == -1){
-				depends.push(modName)
-				var filepath = path.join(srcPath, modName)
-				var source = file.getSource(filepath)
-				code.push(file.getContent(modName, source))
-				getDepends(modName, source)
-			}
+			depends.push(mainPath)
+			code.push(file.getContent(mainPath, mainSource))
+			resolve(code);
 		}
 
-		jsLine.forEach(function(line){
-			if (!reg.test(line))
-				return
+		function getDepends(modPath, modSource){
+			var jsLine = modSource.split('\n')
+			var reg = /\brequire\b/
 
-			line = line.replace(/,/g , ';')
+			function require(modName){
+				if (modName === modPath){
+					console.log('Error File "' + modPath + '" 调用自身.');
+					return;
+				}
 
-			try {
-				console.log(line)
-				var evaFn = new Function('require' , line)
-				evaFn(require)
+				if (modName && depends.indexOf(modName) == -1){
+					len++
+					depends.push(modName)
+					switch(path.extname(modName)){
+						case '.vue':
 
-			}catch(err){
-				console.log(err, line)
+							vueJS(config, hostPath, modName, function(component){
+								var source = component.join('\n')
+								code.push(file.getContent(modName, source))
+								getDepends(modName, source)
+								len--
+								done()
+							})
+							break;
+
+
+						default:
+							var filepath = path.join(srcPath, modName)
+							var source = file.getSource(filepath)
+							code.push(file.getContent(modName, source))
+							getDepends(modName, source)
+							len--
+							done()
+							break;
+
+					}
+				}
 			}
 
-		})
-	}
+			jsLine.forEach(function(line){
+				if (!reg.test(line))
+					return
 
-	return {'depends':depends ,'code':code.join('\n')}
+				line = line.replace(/,/g , ';')
+
+				try {
+					var evaFn = new Function('require' , line)
+					evaFn(require)
+
+				}catch(err){
+					console.log(err, line)
+				}
+
+			})
+		}
+
+
+	})
+
+	Promise.all(getDeps).then(cbk)
+
 } 

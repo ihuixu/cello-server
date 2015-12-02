@@ -55,22 +55,26 @@ function onRequest(req, res){
 	}
 
 	var modName = getName(filePath)
-	var srcPath = path.join(hostPath, config[hostname].path.src)
 
 	switch(fileType){
 		case '/dist' : 
-			var jsfile = defaultJS[modName]
-									? defaultJS[modName]
-									: commonJS(srcPath, modName).code
+			if(defaultJS[modName]){
+				res.end(defaultJS[modName])
+				return;
+				
+			}
 
-			res.end(jsfile)
+			commonJS(config[hostname], hostPath, modName, function(source){
+				res.end(source.join('\n'))
+			})
+
 //			res.end(UglifyJS.minify(jsfile, {fromString: true}).code)
 
 			break;
 
 		case '/components' : 
-			vueJS(hostPath, modName, config[hostname], function(component){
-				res.end(component.join('\n'))
+			vueJS(config[hostname], hostPath, modName, function(source){
+				res.end(source.join('\n'))
 			})
 			break;
 
