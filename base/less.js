@@ -14,12 +14,9 @@ module.exports = function(block, name, lessPath){
 
 			}else{
 
-				var res = {
-					code : block.scoped 
+				var res = block.scoped 
 						? '['+ name+']{' + output.css + '}'
 						: output.css
-				}
-				block.id && (res.id = block.id);
 
 				resolve(res);
 			}

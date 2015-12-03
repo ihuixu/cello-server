@@ -30,12 +30,11 @@ module.exports = function(config, hostPath, mainPath){
 		component[tagname] = []
 		tags[tagname].map(function(block){
 			var lang = block.lang || defaultLang[tagname]
-			var content = method[lang]
+			var res = method[lang]
 					? method[lang](block, name, lessPath)
 					: block.content
 
-			component[tagname].push(content)
-
+			component[tagname].push(res)
 		})
 	}
 	

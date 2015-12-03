@@ -8,8 +8,8 @@ var vueJS = require('./vueJS')
 var objectAssign = require('object-assign');
 
 var defaultJS = {
-	loader : fs.readFileSync('./lib/loader.js', 'utf8')
-	, vue : fs.readFileSync('./lib/vue.js', 'utf8')
+	'loader' : fs.readFileSync('./lib/loader.js', 'utf8')
+	, 'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
 }
 
 function getName(urlpath){
