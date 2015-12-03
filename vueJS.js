@@ -21,8 +21,8 @@ module.exports = function(config, hostPath, mainPath){
 			code.push('var loadStyleLib = require("loadStyle");')
 			code.push('loadStyleLib('+JSON.stringify(source['style'].join(''))+');')
 
-			code.push('var template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
 			code.push('var opts = (function(){' + source['script'] + '})();')
+			code.push('opts.template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
 			code.push('var components = Vue.extend(opts);')
 			code.push('Vue.component("'+ name +'", components)')
 			code.push('return components')
