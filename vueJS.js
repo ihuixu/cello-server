@@ -6,15 +6,25 @@ var component = require('./base/component')
 var tagnames = ['style', 'template', 'script']
 var method = {
 	'style' : getStyle
+	, 'template' : getTemplate
 }
 
-function getStyle(content){
+function getStyle(res){
+	console.log(res)
 	var source = []
 	source.push('var loadStyle = require("loadStyle");')
-	source.push('loadStyle.addStyle("' + content + '");')
+	source.push('var styles = ' + JSON.stringify(res) + ';')
+	source.push('exports.addStyle = function(id){loadStyle(styles, id);}')
 
 	return source.join('\n')
 }
+function getTemplate(res){
+	var source = []
+//	source.push(res)
+
+	return source.join('')
+}
+
 
 module.exports = function(config, hostPath, mainPath){
 	var coms = component(config, hostPath, mainPath)
@@ -32,14 +42,13 @@ module.exports = function(config, hostPath, mainPath){
 		for(var tagname in coms){
 			len++
 			(function(tagname){
-				console.log(coms[tagname])
+				//console.log(coms[tagname])
 				
 				Promise.all(coms[tagname]).then(function(res){
 					len--
-					var content = res.join('')
 					var source = method[tagname]
-							? method[tagname](content)
-							: content
+							? method[tagname](res)
+							: res 
 
 					code.push(source)
 

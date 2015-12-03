@@ -30,11 +30,9 @@ module.exports = function(config, hostPath, mainPath){
 		component[tagname] = []
 		tags[tagname].map(function(block){
 			var lang = block.lang || defaultLang[tagname]
-			var scoped = block.scoped || false
-			var content = block.content
 			var content = method[lang]
-					? method[lang](lessPath, content, scoped, name)
-					: content
+					? method[lang](block, name, lessPath)
+					: block.content
 
 			component[tagname].push(content)
 
@@ -63,8 +61,6 @@ function getTags(mainSource){
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
 		var type = (blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))) *5
-
-		
 
 		var name = blockArray[1+type]
 		var attrs = blockArray[2+type].match(new RegExp(attrRegStr, 'ig'))
