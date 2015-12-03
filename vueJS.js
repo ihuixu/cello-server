@@ -19,7 +19,7 @@ module.exports = function(config, hostPath, mainPath){
 			if(len) return;
 
 			code.push('var loadStyleLib = require("loadStyle");')
-			code.push('loadStyleLib('+JSON.stringify(source['style'].join(''))+');')
+			code.push('loadStyleLib("'+ name + '",' + JSON.stringify(source['style'].join(''))+');')
 
 			code.push('var opts = (function(){' + source['script'] + '})();')
 			code.push('opts.template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
