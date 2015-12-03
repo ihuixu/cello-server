@@ -5,8 +5,8 @@ var Promise = require('bluebird')
 var file = require('./base/file')
 
 var defaultJS = {
-	'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
-	, 'loadStyle' : fs.readFileSync('./lib/loadStyle.js', 'utf8')
+	'loadStyle' : fs.readFileSync('./lib/loadStyle.js', 'utf8')
+	, 'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
 }
 
 module.exports = function(config, hostPath, mainPath){
@@ -15,10 +15,10 @@ module.exports = function(config, hostPath, mainPath){
 	var mainSource = file.getSource(mainFilepath)
 
 	return new Promise(function(resolve, reject) {
-		var reg = /\brequire\b/
+		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
 		var depends = []
 		var code = []
-		len = 0
+		var len = 0
 
 		getDepends(mainPath, mainSource)	
 
@@ -27,17 +27,14 @@ module.exports = function(config, hostPath, mainPath){
 
 			depends.push(mainPath)
 			code.push(file.getContent(mainPath, mainSource))
-			resolve(code);
+			resolve(code.join('\n'));
 		}
 
 		function getDepends(modPath, modSource){
-			var jsLine = modSource.split('\n')
-			jsLine.forEach(function(line){
-				if (!reg.test(line))
-					return
+			var requires = modSource.match(reg) || []
+			len += requires.length
 
-				line = line.replace(/,/g , ';')
-
+			requires.map(function(line){
 				try {
 					var evaFn = new Function('require' , line)
 					evaFn(require)
@@ -55,15 +52,16 @@ module.exports = function(config, hostPath, mainPath){
 				}
 
 				if (modName && depends.indexOf(modName) == -1){
-					len++
 					depends.push(modName)
 
 					switch(path.extname(modName)){
 						case '.vue':
 							vueJS(config, hostPath, modName).then(function(source){
+								len--;
+
 								code.push(file.getContent(modName, source))
 								getDepends(modName, source)
-								len--
+
 								done()
 							})
 							break;
@@ -73,18 +71,16 @@ module.exports = function(config, hostPath, mainPath){
 												? defaultJS[modName]
 												: file.getSource(path.join(srcPath, modName))
 
+							len--;
 							code.push(file.getContent(modName, source))
 							getDepends(modName, source)
-							len--
+
 							done()
 							break;
-
 					}
 				}
 			}
-
 		}
-
 	})
 } 
 

@@ -60,15 +60,14 @@ function onRequest(req, res){
 		case '/dist' : 
 			if(defaultJS[modName]){
 				res.end(defaultJS[modName])
-				return;
-				
-			}
 
-			commonJS(config[hostname], hostPath, modName).then(function(source){
-				source = source.join('\n')
-				res.end(source)
-//			res.end(UglifyJS.minify(source, {fromString: true}).code)
-			})
+			}else{
+
+				commonJS(config[hostname], hostPath, modName).then(function(source){
+					res.end(source)
+	//			res.end(UglifyJS.minify(source, {fromString: true}).code)
+				})
+			}
 
 			break;
 
