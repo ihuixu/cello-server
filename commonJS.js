@@ -48,6 +48,8 @@ module.exports = function(config, hostPath, mainPath){
 			function require(modName){
 				if (modName === modPath){
 					console.log('Error File "' + modPath + '" 调用自身.');
+					len--;
+					done()
 					return;
 				}
 
@@ -57,11 +59,10 @@ module.exports = function(config, hostPath, mainPath){
 					switch(path.extname(modName)){
 						case '.vue':
 							vueJS(config, hostPath, modName).then(function(source){
-								len--;
-
 								code.push(file.getContent(modName, source))
 								getDepends(modName, source)
 
+								len--;
 								done()
 							})
 							break;
@@ -71,13 +72,17 @@ module.exports = function(config, hostPath, mainPath){
 												? defaultJS[modName]
 												: file.getSource(path.join(srcPath, modName))
 
-							len--;
 							code.push(file.getContent(modName, source))
 							getDepends(modName, source)
 
+							len--;
 							done()
 							break;
 					}
+
+				}else{
+					len--;
+					done()
 				}
 			}
 		}
