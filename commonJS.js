@@ -46,7 +46,6 @@ module.exports = function(config, hostPath, mainPath){
 					switch(path.extname(modName)){
 						case '.vue':
 							vueJS(config, hostPath, modName).then(function(source){
-								source = source.join('\n')
 								code.push(file.getContent(modName, source))
 								getDepends(modName, source)
 								len--

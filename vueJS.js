@@ -24,7 +24,7 @@ module.exports = function(config, hostPath, mainPath){
 			code.push('var template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
 			code.push(source['script'])
 
-			resolve(code);
+			resolve(code.join('\n'));
 		}
 
 		for(var tagname in coms){

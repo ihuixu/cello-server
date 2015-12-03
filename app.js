@@ -74,7 +74,6 @@ function onRequest(req, res){
 
 		case '/components' : 
 			vueJS(config[hostname], hostPath, modName).then(function(source){
-				source = source.join('\n')
 				res.end(source)
 			})
 			break;
