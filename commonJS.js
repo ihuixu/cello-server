@@ -15,6 +15,7 @@ module.exports = function(config, hostPath, mainPath){
 	var mainSource = file.getSource(mainFilepath)
 
 	return new Promise(function(resolve, reject) {
+		var reg = /\brequire\b/
 		var depends = []
 		var code = []
 		len = 0
@@ -31,7 +32,21 @@ module.exports = function(config, hostPath, mainPath){
 
 		function getDepends(modPath, modSource){
 			var jsLine = modSource.split('\n')
-			var reg = /\brequire\b/
+			jsLine.forEach(function(line){
+				if (!reg.test(line))
+					return
+
+				line = line.replace(/,/g , ';')
+
+				try {
+					var evaFn = new Function('require' , line)
+					evaFn(require)
+
+				}catch(err){
+					console.log(err, line)
+				}
+
+			})
 
 			function require(modName){
 				if (modName === modPath){
@@ -68,21 +83,6 @@ module.exports = function(config, hostPath, mainPath){
 				}
 			}
 
-			jsLine.forEach(function(line){
-				if (!reg.test(line))
-					return
-
-				line = line.replace(/,/g , ';')
-
-				try {
-					var evaFn = new Function('require' , line)
-					evaFn(require)
-
-				}catch(err){
-					console.log(err, line)
-				}
-
-			})
 		}
 
 	})
