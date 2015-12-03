@@ -6,9 +6,12 @@ var less = require('./less')
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
-  template: 'ejs',
-  style: 'less',
-  script: 'js'
+  style: 'less'
+  ,script: 'js'
+  ,template: 'ejs'
+}
+var method = {
+	'less' : less
 }
 
 module.exports = function(config, hostPath, mainPath){
@@ -29,16 +32,11 @@ module.exports = function(config, hostPath, mainPath){
 			var lang = block.lang || defaultLang[tagname]
 			var scoped = block.scoped || false
 			var content = block.content
+			var content = method[lang]
+					? method[lang](lessPath, content, scoped, name)
+					: content
 
-			switch(lang){
-				case 'less' :
-					var les = less(lessPath, content, scoped, name)
-					component[tagname].push(les)
-					break;
-
-				default:
-					break;
-			}
+			component[tagname].push(content)
 
 		})
 	}
