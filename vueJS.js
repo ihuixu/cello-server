@@ -6,9 +6,11 @@ var component = require('./base/component')
 var tagnames = ['style', 'template', 'script']
 
 module.exports = function(config, hostPath, mainPath){
-	var coms = component(config, hostPath, mainPath)
-
 	return new Promise(function(resolve, reject) {
+		var components = component(config, hostPath, mainPath)
+		var coms = components.coms
+		var name = components.name
+
 		var len = 0
 		var source = {}
 		var code = []
@@ -16,9 +18,10 @@ module.exports = function(config, hostPath, mainPath){
 		function done(){
 			if(len) return;
 
-			code.push('var loadStyleLib=require("loadStyle");')
-			code.push('loadStyleLib('+JSON.stringify(source['style'])+');')
+			code.push('var loadStyleLib = require("loadStyle");')
+			code.push('loadStyleLib('+JSON.stringify(source['style'].join(''))+');')
 
+			code.push('var template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
 			code.push(source['script'])
 
 			resolve(code);

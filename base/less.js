@@ -3,8 +3,11 @@ var Promise = require("bluebird")
 
 module.exports = function(block, name, lessPath){
 	return new Promise(function(resolve, reject) {
+		var content = block.scoped 
+				? '.'+ name+'{' + block.content + '}'
+				: block.content
 
-		less.render(block.content, {
+		less.render(content, {
 			paths:lessPath ? [lessPath] : []
 			, compress:true
 
@@ -14,11 +17,7 @@ module.exports = function(block, name, lessPath){
 
 			}else{
 
-				var res = block.scoped 
-						? '['+ name+']{' + output.css + '}'
-						: output.css
-
-				resolve(res);
+				resolve(output.css);
 			}
 		})
 

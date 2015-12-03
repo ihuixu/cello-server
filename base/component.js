@@ -38,12 +38,14 @@ module.exports = function(config, hostPath, mainPath){
 		})
 	}
 	
-	return component 
+	return {'coms':component,'name':name}
 }
 
 function getName(mainPath){
-	return mainPath
+	var reg = new RegExp('(\.vue)$', 'g')
+	return 'component-' + mainPath.replace(reg, '').split(path.sep).join('-')
 }
+
 
 function getTags(mainSource){
 	var tags = {}
