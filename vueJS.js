@@ -14,7 +14,7 @@ function getStyle(res){
 	var source = []
 	source.push('var loadStyle = require("loadStyle");')
 	source.push('var styles = ' + JSON.stringify(res) + ';')
-	source.push('exports.addStyle = function(id){loadStyle(styles, id);}')
+	source.push('exports.loadStyle = function(id){loadStyle(styles, id);}')
 
 	return source.join('\n')
 }
