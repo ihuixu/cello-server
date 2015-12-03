@@ -22,7 +22,10 @@ module.exports = function(config, hostPath, mainPath){
 			code.push('loadStyleLib('+JSON.stringify(source['style'].join(''))+');')
 
 			code.push('var template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
-			code.push(source['script'])
+			code.push('var opts = (function(){' + source['script'] + '})();')
+			code.push('var components = Vue.extend(opts);')
+			code.push('Vue.component("'+ name +'", components)')
+			code.push('return components')
 
 			resolve(code.join('\n'));
 		}
