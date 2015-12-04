@@ -30,6 +30,7 @@ module.exports = function(config, hostPath, mainPath){
 			code.push('var component = Vue.extend(opts)')
 			code.push('return Vue.component("'+ name +'", component)')
 */
+
 			code.push('return Vue.component("'+ name +'", opts)')
 
 			resolve(code.join('\n'));
