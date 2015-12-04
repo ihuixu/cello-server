@@ -12,8 +12,13 @@ var defaultJS = {
 	, 'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
 }
 
+var defaultCSS = {
+	'cssresetwww': fs.readFileSync('./lib/cssresetwww.less', 'utf8')
+	,'cssresetm': fs.readFileSync('./lib/cssresetm.less', 'utf8')
+}
+
 function getName(urlpath){
-	var reg = new RegExp('^(\/dist\/)|(\.js)$', 'g')
+	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))$', 'g')
 	return urlpath.replace(reg, '')
 }
 
@@ -62,19 +67,25 @@ function onRequest(req, res){
 				res.end(defaultJS[modName])
 
 			}else{
-
 				commonJS(config[hostname], hostPath, modName).then(function(source){
 					res.end(source)
 	//			res.end(UglifyJS.minify(source, {fromString: true}).code)
 				})
 			}
-
 			break;
 
 		case '/components' : 
 			vueJS(config[hostname], hostPath, modName).then(function(source){
 				res.end(source)
 			})
+			break;
+
+		case '/css' : 
+			if(defaultCSS[modName]){
+				res.end(defaultCSS[modName])
+
+			}else{
+			}
 			break;
 
 		default :
