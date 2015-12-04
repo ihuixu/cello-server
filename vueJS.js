@@ -24,9 +24,12 @@ module.exports = function(config, hostPath, mainPath){
 			code.push('require("loadStyle")("'+ name + '",' + style +');')
 			code.push('var opts = (function(){' + source['script'] + '})();')
 			code.push('opts.template = ' + template)
+
+/*
 			code.push('var component = Vue.extend(opts)')
-			code.push('Vue.component("'+ name +'", component)')
-			code.push('return component')
+			code.push('return Vue.component("'+ name +'", component)')
+*/
+			code.push('return Vue.component("'+ name +'", opts)')
 
 			resolve(code.join('\n'));
 		}
