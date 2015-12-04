@@ -24,26 +24,26 @@ module.exports = function(config, hostPath, mainPath){
 	var name = getName(mainPath)
 	var tags = getTags(mainSource) 
 
-	var component = {}
+	var components = {}
 
 	for(var tagname in tags){
-		component[tagname] = []
+		components[tagname] = []
 		tags[tagname].map(function(block){
 			var lang = block.lang || defaultLang[tagname]
 			var res = method[lang]
 					? method[lang](block, name, lessPath)
 					: block.content
 
-			component[tagname].push(res)
+			components[tagname].push(res)
 		})
 	}
 	
-	return {'coms':component,'name':name}
+	return {'components':components,'name':name}
 }
 
 function getName(mainPath){
 	var reg = new RegExp('(\.vue)$', 'g')
-	return 'component-' + mainPath.replace(reg, '').split(path.sep).join('-')
+	return 'comp-' + mainPath.replace(reg, '').split(path.sep).join('-')
 }
 
 

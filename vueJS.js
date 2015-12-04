@@ -7,9 +7,9 @@ var tagnames = ['style', 'template', 'script']
 
 module.exports = function(config, hostPath, mainPath){
 	return new Promise(function(resolve, reject) {
-		var components = component(config, hostPath, mainPath)
-		var coms = components.coms
-		var name = components.name
+		var comp = component(config, hostPath, mainPath)
+		var components = comp.components
+		var name = comp.name
 
 		var len = 0
 		var source = {}
@@ -18,22 +18,23 @@ module.exports = function(config, hostPath, mainPath){
 		function done(){
 			if(len) return;
 
-			code.push('var loadStyleLib = require("loadStyle");')
-			code.push('loadStyleLib("'+ name + '",' + JSON.stringify(source['style'].join(''))+');')
+			var style = JSON.stringify(source['style'].join(''))
+			var template = JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>')
 
+			code.push('require("loadStyle")("'+ name + '",' + style +');')
 			code.push('var opts = (function(){' + source['script'] + '})();')
-			code.push('opts.template = ' + JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>'))
-			code.push('var components = Vue.extend(opts);')
-			code.push('Vue.component("'+ name +'", components)')
-			code.push('return components')
+			code.push('opts.template = ' + template)
+			code.push('var component = Vue.extend(opts)')
+			code.push('Vue.component("'+ name +'", component)')
+			code.push('return component')
 
 			resolve(code.join('\n'));
 		}
 
-		for(var tagname in coms){
+		for(var tagname in components){
 			len++
 			;(function(tagname){
-				Promise.all(coms[tagname]).then(function(res){
+				Promise.all(components[tagname]).then(function(res){
 					len--
 					source[tagname] = res
 

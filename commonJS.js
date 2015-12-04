@@ -33,6 +33,7 @@ module.exports = function(config, hostPath, mainPath){
 		function getDepends(modPath, modSource){
 			var requires = modSource.match(reg) || []
 			len += requires.length
+			done()
 
 			requires.map(function(line){
 				try {
