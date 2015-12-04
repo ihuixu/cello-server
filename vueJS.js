@@ -20,9 +20,10 @@ module.exports = function(config, hostPath, mainPath){
 
 			var style = JSON.stringify(source['style'].join(''))
 			var template = JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>')
+			var script = source['script'].join('') || 'return {}'
 
 			code.push('require("loadStyle")("'+ name + '",' + style +');')
-			code.push('var opts = (function(){' + source['script'] + '})();')
+			code.push('var opts = (function(){' + script + '})();')
 			code.push('opts.template = ' + template)
 
 /*
@@ -40,6 +41,12 @@ module.exports = function(config, hostPath, mainPath){
 				Promise.all(components[tagname]).then(function(res){
 					len--
 					source[tagname] = res
+
+					done()
+				}, function(error){
+					console.log(error)
+					len--
+					source[tagname] = [] 
 
 					done()
 				})
