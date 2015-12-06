@@ -19,7 +19,8 @@ module.exports = function(config, hostPath, mainPath){
 			if(len) return;
 
 			var style = JSON.stringify(source['style'].join(''))
-			var template = JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>')
+			var template = JSON.stringify(source['template'].join(''))
+			//var template = JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>')
 			var script = source['script'].join('') || 'return {}'
 
 			code.push('require("loadStyle")("'+ name + '",' + style +');')
