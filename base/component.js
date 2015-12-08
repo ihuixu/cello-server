@@ -3,6 +3,11 @@ var fs = require('fs')
 var objectAssign = require('object-assign')
 var file = require('./file')
 var less = require('./less')
+var ejs = require('ejs')
+
+var str =ejs.render('<%for(var i = 0 ; i<= 10000; i+= 100){%><%}%>')
+console.log(str)
+
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
@@ -12,6 +17,9 @@ var defaultLang = {
 }
 var method = {
 	'less' : less
+	, 'ejs' : function(block, name){
+		return ejs.render(block.content)
+	}
 }
 
 module.exports = function(config, hostPath, mainPath){
