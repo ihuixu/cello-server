@@ -4,6 +4,7 @@ var path = require('path')
 var UglifyJS = require("uglify-js");
 var config = require('./config')
 var commonJS = require('./commonJS')
+var commonCSS = require('./commonCSS')
 var vueJS = require('./vueJS')
 var objectAssign = require('object-assign');
 
@@ -62,14 +63,25 @@ function onRequest(req, res){
 	var modName = getName(filePath)
 
 	switch(fileType){
-		case '/dist' : 
+		case '/src' : 
 			if(defaultJS[modName]){
 				res.end(defaultJS[modName])
 
 			}else{
 				commonJS(config[hostname], hostPath, modName).then(function(source){
 					res.end(source)
-	//			res.end(UglifyJS.minify(source, {fromString: true}).code)
+				})
+			}
+			break;
+
+
+		case '/dist' : 
+			if(defaultJS[modName]){
+				res.end(defaultJS[modName])
+
+			}else{
+				commonJS(config[hostname], hostPath, modName).then(function(source){
+					res.end(UglifyJS.minify(source, {fromString: true}).code)
 				})
 			}
 			break;
@@ -85,6 +97,9 @@ function onRequest(req, res){
 				res.end(defaultCSS[modName])
 
 			}else{
+				commonCSS(config[hostname], hostPath, modName).then(function(source){
+					res.end(source)
+				})
 			}
 			break;
 

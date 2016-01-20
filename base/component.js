@@ -5,10 +5,6 @@ var file = require('./file')
 var less = require('./less')
 var ejs = require('ejs')
 
-var str =ejs.render('<%for(var i = 0 ; i<= 10000; i+= 100){%><%}%>')
-console.log(str)
-
-
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
   style: 'less'

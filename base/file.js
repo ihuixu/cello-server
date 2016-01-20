@@ -8,9 +8,7 @@ exports.getSource = function(filePath){
 	if(!fs.existsSync(filePath))
 		return ''
 
-	var source = fs.readFileSync(filePath, 'utf8')
-
-	return source
+	return fs.readFileSync(filePath, 'utf8') 
 } 
 
 exports.getContent = function(modPath, modSource){
