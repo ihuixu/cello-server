@@ -1,7 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 var Promise = require('bluebird')
-var component = require('./base/component')
+var component = require('./component')
 
 var tagnames = ['style', 'template', 'script']
 

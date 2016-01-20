@@ -2,7 +2,7 @@ var path = require('path')
 var fs = require('fs')
 var vueJS = require('./vueJS')
 var Promise = require('bluebird')
-var file = require('./base/file')
+var file = require('./file')
 
 var defaultJS = {
 	'loadStyle' : fs.readFileSync('./lib/loadStyle.js', 'utf8')

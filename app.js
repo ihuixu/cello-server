@@ -3,9 +3,9 @@ var fs = require('fs')
 var path = require('path')
 var UglifyJS = require("uglify-js");
 var config = require('./config')
-var commonJS = require('./commonJS')
-var commonCSS = require('./commonCSS')
-var vueJS = require('./vueJS')
+var commonJS = require('./base/commonJS')
+var commonCSS = require('./base/commonCSS')
+var vueJS = require('./base/vueJS')
 var objectAssign = require('object-assign');
 
 var defaultJS = {

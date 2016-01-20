@@ -1,7 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 var Promise = require('bluebird')
-var file = require('./base/file')
+var file = require('./file')
 var less = require('less')
 
 module.exports = function(config, hostPath, mainPath){
