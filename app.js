@@ -34,9 +34,9 @@ function onRequest(req, res){
 	config[hostname] = {
 		path:{
 			"src":"./src/",
-			"dist":"./dist/",
-			"less":"./less/",
-			"components":"./components/"
+			, "dist":"./dist/"
+			, "less":"./less/"
+			, "components":"./components/"
 		}
 	}
 
