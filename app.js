@@ -27,8 +27,8 @@ function onRequest(req, res){
 	var hostname = req.headers.host
 	var hostPath = path.join(config.path.root, config.virtualHost[hostname])
 
-	var fileArray = req.url.split(path.sep)
-	var fileType = fileArray.splice(0,2).join('/')
+	var fileArray = req.url.split('/')
+	var fileOption = fileArray.splice(0,2).join('').split('~')
 	var filePath = fileArray.join('/')
 
 	config[hostname] = {
@@ -62,37 +62,37 @@ function onRequest(req, res){
 
 	var modName = getName(filePath)
 
-	switch(fileType){
-		case '/src' : 
+	switch(fileOption[0]){
+		case 'src' : 
 			if(defaultJS[modName]){
 				res.end(defaultJS[modName])
 
 			}else{
-				commonJS(config[hostname], hostPath, modName).then(function(source){
+				commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
 					res.end(source)
 				})
 			}
 			break;
 
 
-		case '/dist' : 
+		case 'dist' : 
 			if(defaultJS[modName]){
 				res.end(defaultJS[modName])
 
 			}else{
-				commonJS(config[hostname], hostPath, modName).then(function(source){
+				commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
 					res.end(UglifyJS.minify(source, {fromString: true}).code)
 				})
 			}
 			break;
 
-		case '/components' : 
+		case 'components' : 
 			vueJS(config[hostname], hostPath, modName).then(function(source){
 				res.end(source)
 			})
 			break;
 
-		case '/css' : 
+		case 'css' : 
 			if(defaultCSS[modName]){
 				res.end(defaultCSS[modName])
 

@@ -9,7 +9,8 @@ var defaultJS = {
 	, 'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
 }
 
-module.exports = function(config, hostPath, mainPath){
+module.exports = function(config, hostPath, mainPath, exclude){
+	var excludes = (exclude||'').split(',')
 	var srcPath = path.join(hostPath, config.path.src)
 	var mainFilepath = path.join(srcPath, mainPath)
 	var mainSource = file.getSource(mainFilepath)
@@ -54,7 +55,7 @@ module.exports = function(config, hostPath, mainPath){
 					return;
 				}
 
-				if (modName && depends.indexOf(modName) == -1 && modName != mainPath){
+				if (modName && depends.indexOf(modName) == -1 && excludes.indexOf(modName) == -1 && modName != mainPath){
 					depends.push(modName)
 
 					switch(path.extname(modName)){
