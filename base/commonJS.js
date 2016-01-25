@@ -54,7 +54,7 @@ module.exports = function(config, hostPath, mainPath){
 					return;
 				}
 
-				if (modName && depends.indexOf(modName) == -1){
+				if (modName && depends.indexOf(modName) == -1 && modName != mainPath){
 					depends.push(modName)
 
 					switch(path.extname(modName)){
