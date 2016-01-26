@@ -5,8 +5,8 @@ var Promise = require('bluebird')
 var file = require('./file')
 
 var defaultJS = {
-	'loadStyle' : fs.readFileSync('./lib/loadStyle.js', 'utf8')
-	, 'vue' : fs.readFileSync('./lib/vue.js', 'utf8')
+	'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
+	, 'vue' : fs.readFileSync(path.join(__dirname, '../lib/vue.js'), 'utf8')
 }
 
 module.exports = function(config, hostPath, mainPath, exclude){

@@ -4,7 +4,7 @@ var less = require("less")
 var Promise = require("bluebird")
 
 var defaultLess = {
-	'atom': fs.readFileSync('./lib/atom.less', 'utf8')
+	'atom': fs.readFileSync(path.join(__dirname, '../lib/atom.less'), 'utf8')
 }
 
 module.exports = function(block, name, lessPath){
