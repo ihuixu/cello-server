@@ -1,7 +1,5 @@
 var server = require('cello-server')
-var etc = require('./config/etc.json')
-var virtualHost = require('./config/virtual_host.json')
+var config = require('config.json')
 
-
-server.start({etc:etc, virtualHost:virtualHost})
+server.start(config || {})
 

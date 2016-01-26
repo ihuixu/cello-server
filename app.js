@@ -7,9 +7,7 @@ var commonCSS = require('./base/commonCSS')
 var vueJS = require('./base/vueJS')
 var objectAssign = require('object-assign');
 
-var etc = require('./config/etc.json')
-var virtualHost = require('./config/virtual_host.json')
-
+var defaultConfig = require('./config.json')
 
 var defaultJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, './lib/loader.js'), 'utf8')
@@ -27,12 +25,11 @@ function getName(urlpath){
 }
 
 exports.start = function(config){
-	!config.etc && (config.etc = etc);
-	!config.virtualHost && (config.virtualHost = virtualHost);
+	config = objectAssign(defaultConfig, config || {})
 
 	function onRequest(req, res){
 		var hostname = req.headers.host
-		var hostPath = path.join(config.virtualHost[hostname])
+		var hostPath = path.join(config.hosts[hostname])
 
 		var fileArray = req.url.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')
