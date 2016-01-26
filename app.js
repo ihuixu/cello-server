@@ -64,7 +64,7 @@ exports.start = function(config){
 					 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
 					 var obj = JSON.parse(content)
 
-					 config[hostname][name] = objectAssign(config[hostname][name], obj)
+					 config[hostname][name] = objectAssign(config[hostname][name]||{}, obj)
 
 					 })(i);
 				}
