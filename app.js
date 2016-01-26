@@ -19,6 +19,7 @@ var defaultCSS = {
 	,'cssresetm': fs.readFileSync(path.join(__dirname, './lib/cssresetm.less'), 'utf8')
 }
 
+
 function getName(urlpath){
 	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))$', 'g')
 	return urlpath.replace(reg, '')
@@ -26,12 +27,14 @@ function getName(urlpath){
 
 exports.start = function(config){
 	config = objectAssign(defaultConfig, config || {})
+	var outputed = {}
 
 	function onRequest(req, res){
 		var hostname = req.headers.host
 
 		if(!config.hosts[hostname]){
-			return res.end('console.log("Not exist: config.hosts['+ hostname +']!")')
+			send(400, 'Not exist: config.hosts['+ hostname +']!')
+			return; 
 		}
 
 
@@ -75,12 +78,12 @@ exports.start = function(config){
 		switch(fileOption[0]){
 			case 'src' : 
 				if(defaultJS[modName]){
-					res.end(defaultJS[modName])
+					send(200, defaultJS[modName], 'js')
 
 				}else{
 					commonJS(config[hostname], hostPath, modName, fileOption[1])
 						.then(function(source){
-							res.end(source)
+							send(200, source, 'js')
 						})
 				}
 				break;
@@ -88,12 +91,12 @@ exports.start = function(config){
 
 			case 'dist' : 
 				if(defaultJS[modName]){
-					res.end(defaultJS[modName])
+					send(200, defaultJS[modName], 'js')
 
 				}else{
 					commonJS(config[hostname], hostPath, modName, fileOption[1])
 						.then(function(source){
-							res.end(UglifyJS.minify(source, {fromString: true}).code)
+							send(200, UglifyJS.minify(source, {fromString: true}).code, 'js')
 						})
 				}
 				break;
@@ -101,28 +104,46 @@ exports.start = function(config){
 			case 'components' : 
 				vueJS(config[hostname], hostPath, modName)
 					.then(function(source){
-						res.end(source)
+						send(200, source, 'js')
 					})
 				break;
 
 			case 'css' : 
 				if(defaultCSS[modName]){
-					res.end(defaultCSS[modName])
+					send(200, defaultCSS[modName], 'css')
 
 				}else{
 					commonCSS(config[hostname], hostPath, modName)
 						.then(function(source){
-							res.end(source)
-						})
-						.error(function(){
-							res.end(123)
+							send(200, source, 'css')
 						})
 				}
 				break;
 
 			default :
-				res.end('')
+				send(200)
 				break;
+		}
+
+		function send(state, content, filetype){
+			var now = new Date
+			var lastModified = outputed[req.url] || (new Date).toUTCString()
+			var expires = new Date(now.getFullYear() , now.getMonth() , now.getDate()+30)
+
+			var contentType = 'text/plain'
+			if ('css' == filetype) contentType = 'text/css'
+			else if ('js' == filetype) contentType = 'application/javascript'
+
+			res.writeHeader(state ,{
+					"Content-Type" :  contentType +';charset=utf-8',
+					"Last-Modified" : lastModified,
+					"Expires" : expires.toUTCString()
+			});
+
+			outputed[req.url] = lastModified
+
+			res.write(content || '')
+			res.end()
 		}
 	}
 
