@@ -78,9 +78,10 @@ exports.start = function(config){
 					res.end(defaultJS[modName])
 
 				}else{
-					commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
-						res.end(source)
-					})
+					commonJS(config[hostname], hostPath, modName, fileOption[1])
+						.then(function(source){
+							res.end(source)
+						})
 				}
 				break;
 
@@ -90,16 +91,18 @@ exports.start = function(config){
 					res.end(defaultJS[modName])
 
 				}else{
-					commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
-						res.end(UglifyJS.minify(source, {fromString: true}).code)
-					})
+					commonJS(config[hostname], hostPath, modName, fileOption[1])
+						.then(function(source){
+							res.end(UglifyJS.minify(source, {fromString: true}).code)
+						})
 				}
 				break;
 
 			case 'components' : 
-				vueJS(config[hostname], hostPath, modName).then(function(source){
-					res.end(source)
-				})
+				vueJS(config[hostname], hostPath, modName)
+					.then(function(source){
+						res.end(source)
+					})
 				break;
 
 			case 'css' : 
@@ -107,9 +110,13 @@ exports.start = function(config){
 					res.end(defaultCSS[modName])
 
 				}else{
-					commonCSS(config[hostname], hostPath, modName).then(function(source){
-						res.end(source)
-					})
+					commonCSS(config[hostname], hostPath, modName)
+						.then(function(source){
+							res.end(source)
+						})
+						.error(function(){
+							res.end(123)
+						})
 				}
 				break;
 

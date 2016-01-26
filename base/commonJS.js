@@ -26,7 +26,7 @@ module.exports = function(config, hostPath, mainPath, exclude){
 			if(len) return;
 
 			depends.push(mainPath)
-			code.push(file.getContent(mainPath, mainSource))
+			code.push(file.getJSContent(mainPath, mainSource))
 			resolve(code.join('\n'));
 		}
 
@@ -60,7 +60,7 @@ module.exports = function(config, hostPath, mainPath, exclude){
 					switch(path.extname(modName)){
 						case '.vue':
 							vueJS(config, hostPath, modName).then(function(source){
-								code.push(file.getContent(modName, source))
+								code.push(file.getJSContent(modName, source))
 								getDepends(modName, source)
 
 								len--;
@@ -73,7 +73,7 @@ module.exports = function(config, hostPath, mainPath, exclude){
 												? defaultJS[modName]
 												: file.getSource(path.join(srcPath, modName))
 
-							code.push(file.getContent(modName, source))
+							code.push(file.getJSContent(modName, source))
 							getDepends(modName, source)
 
 							len--;

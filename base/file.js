@@ -5,23 +5,24 @@ exports.getSource = function(filePath){
 	if(!path.extname(filePath))
 		filePath += '.js'
 
-	if(!fs.existsSync(filePath))
-		return 'console.log("'+filePath+' is lost!");'
+	if(fs.existsSync(filePath)){
+		return fs.readFileSync(filePath, 'utf8') 
 
+	}else{
+		return ''
+	}
 
-	return fs.readFileSync(filePath, 'utf8') 
 } 
 
-exports.getContent = function(modPath, modSource){
-	switch(path.extname(modPath)){
-		default : 
-			var jsfile = [
-				'define("' + modPath + '",function(require, exports){'
-				, modSource 
-				, '});'
-			]
-			return jsfile.join('\n')
-			break;
+exports.getJSContent = function(modPath, modSource){
+	var jsfile = ''
+	if(modSource){
+		jsfile = 'define("' + modPath + '",function(require, exports){\n' + modSource + '\n});\n'
+
+	}else{
+		jsfile = 'console.log("' + modPath + ' is lost!");\n'
+
 	}
+	return jsfile
 }
 
