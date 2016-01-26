@@ -113,7 +113,7 @@ exports.start = function(config){
 		}
 	}
 
-	http.createServer(onRequest).listen(config.etc.onPort || 80)
+	http.createServer(onRequest).listen(config.onPort || 80)
 }
 
 
