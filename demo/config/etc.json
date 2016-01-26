@@ -1,0 +1,5 @@
+{
+	"max_time": 3000,
+	"isDebug": true,
+	"onPort": 6144
+}

@@ -8,7 +8,6 @@ var vueJS = require('./base/vueJS')
 var objectAssign = require('object-assign');
 
 var etc = require('./config/etc.json')
-var path = require ('./config/path.json')
 var virtualHost = require('./config/virtual_host.json')
 
 
@@ -29,12 +28,11 @@ function getName(urlpath){
 
 exports.start = function(config){
 	!config.etc && (config.etc = etc);
-	!config.path && (config.path = path);
 	!config.virtualHost && (config.virtualHost = virtualHost);
 
 	function onRequest(req, res){
 		var hostname = req.headers.host
-		var hostPath = path.join(config.path.root, config.virtualHost[hostname])
+		var hostPath = path.join(config.virtualHost[hostname])
 
 		var fileArray = req.url.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')

@@ -1,4 +1,4 @@
 {
-    "demo.cello.com": "cello-static",
-    "demo2.cello.com": "cello-static2"
+    "demo.cello.com": "../cello-static",
+    "demo2.cello.com": "../cello-static2"
 }
