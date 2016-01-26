@@ -1,16 +1,16 @@
 {
   "name": "cello-server",
-  "version": "0.0.1",
-	"description": "cello-server 静态服务 commonjs less components",
+  "version": "0.0.2",
+  "description": "cello-server 静态服务 commonjs less components",
   "scripts": {
     "start": "node app.js"
   },
-	"author": {
+  "author": {
     "name": "huixu",
     "email": "xh1021@vip.qq.com"
   },
-	"main": "app.js",
-	"repository": {
+  "main": "app.js",
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/xh1021/cello-server.git"
   },
