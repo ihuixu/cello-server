@@ -6,7 +6,7 @@ exports.getSource = function(filePath){
 		filePath += '.js'
 
 	if(!fs.existsSync(filePath))
-		return ''
+		return 'console.log("'+filePath+' is lost!");'
 
 
 	return fs.readFileSync(filePath, 'utf8') 
