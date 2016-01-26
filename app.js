@@ -2,11 +2,12 @@ var http = require('http')
 var fs = require('fs')
 var path = require('path')
 var UglifyJS = require("uglify-js");
-var config = require('./config')
 var commonJS = require('./base/commonJS')
 var commonCSS = require('./base/commonCSS')
 var vueJS = require('./base/vueJS')
 var objectAssign = require('object-assign');
+
+var defaultConfig = require('./config')
 
 var defaultJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, './lib/loader.js'), 'utf8')
@@ -23,92 +24,96 @@ function getName(urlpath){
 	return urlpath.replace(reg, '')
 }
 
-function onRequest(req, res){
-	var hostname = req.headers.host
-	var hostPath = path.join(config.path.root, config.virtualHost[hostname])
+exports.start = function(config){
+	config = config || defaultConfig
 
-	var fileArray = req.url.split('/')
-	var fileOption = fileArray.splice(0,2).join('').split('~')
-	var filePath = fileArray.join('/')
+	function onRequest(req, res){
+		var hostname = req.headers.host
+		var hostPath = path.join(config.path.root, config.virtualHost[hostname])
 
-	config[hostname] = {
-		path:{
-			"src":"./src/"
-			, "dist":"./dist/"
-			, "less":"./less/"
-			, "components":"./components/"
+		var fileArray = req.url.split('/')
+		var fileOption = fileArray.splice(0,2).join('').split('~')
+		var filePath = fileArray.join('/')
+
+		config[hostname] = {
+			path:{
+				"src":"./src/"
+				, "dist":"./dist/"
+				, "less":"./less/"
+				, "components":"./components/"
+			}
+		}
+
+		if(fs.existsSync(hostPath)){
+			var configs = {}
+			var configPath = path.join(hostPath, 'config')
+
+			if(fs.existsSync(configPath))
+				configs = fs.readdirSync(configPath)
+
+				for(var i in configs){
+					(function(i){
+					 var configname = configs[i]
+					 var name = configname.replace('.json','') 
+					 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
+					 var obj = JSON.parse(content)
+
+					 config[hostname][name] = objectAssign(config[hostname][name], obj)
+
+					 })(i);
+				}
+		}
+
+		var modName = getName(filePath)
+
+		switch(fileOption[0]){
+			case 'src' : 
+				if(defaultJS[modName]){
+					res.end(defaultJS[modName])
+
+				}else{
+					commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
+						res.end(source)
+					})
+				}
+				break;
+
+
+			case 'dist' : 
+				if(defaultJS[modName]){
+					res.end(defaultJS[modName])
+
+				}else{
+					commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
+						res.end(UglifyJS.minify(source, {fromString: true}).code)
+					})
+				}
+				break;
+
+			case 'components' : 
+				vueJS(config[hostname], hostPath, modName).then(function(source){
+					res.end(source)
+				})
+				break;
+
+			case 'css' : 
+				if(defaultCSS[modName]){
+					res.end(defaultCSS[modName])
+
+				}else{
+					commonCSS(config[hostname], hostPath, modName).then(function(source){
+						res.end(source)
+					})
+				}
+				break;
+
+			default :
+				res.end('')
+				break;
 		}
 	}
 
-	if(fs.existsSync(hostPath)){
-		var configs = {}
-		var configPath = path.join(hostPath, 'config')
-
-		if(fs.existsSync(configPath))
-			configs = fs.readdirSync(configPath)
-
-			for(var i in configs){
-				(function(i){
-				 var configname = configs[i]
-				 var name = configname.replace('.json','') 
-				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
-				 var obj = JSON.parse(content)
-
-				 config[hostname][name] = objectAssign(config[hostname][name], obj)
-
-				 })(i);
-			}
-	}
-
-	var modName = getName(filePath)
-
-	switch(fileOption[0]){
-		case 'src' : 
-			if(defaultJS[modName]){
-				res.end(defaultJS[modName])
-
-			}else{
-				commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
-					res.end(source)
-				})
-			}
-			break;
-
-
-		case 'dist' : 
-			if(defaultJS[modName]){
-				res.end(defaultJS[modName])
-
-			}else{
-				commonJS(config[hostname], hostPath, modName, fileOption[1]).then(function(source){
-					res.end(UglifyJS.minify(source, {fromString: true}).code)
-				})
-			}
-			break;
-
-		case 'components' : 
-			vueJS(config[hostname], hostPath, modName).then(function(source){
-				res.end(source)
-			})
-			break;
-
-		case 'css' : 
-			if(defaultCSS[modName]){
-				res.end(defaultCSS[modName])
-
-			}else{
-				commonCSS(config[hostname], hostPath, modName).then(function(source){
-					res.end(source)
-				})
-			}
-			break;
-
-		default :
-			res.end('')
-			break;
-	}
+	http.createServer(onRequest).listen(config.etc.onPort || 80)
 }
-
-http.createServer(onRequest).listen(config.etc.onPort || 80)
 
 

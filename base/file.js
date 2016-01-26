@@ -8,6 +8,7 @@ exports.getSource = function(filePath){
 	if(!fs.existsSync(filePath))
 		return ''
 
+
 	return fs.readFileSync(filePath, 'utf8') 
 } 
 

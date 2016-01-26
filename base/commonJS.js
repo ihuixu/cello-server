@@ -12,8 +12,7 @@ var defaultJS = {
 module.exports = function(config, hostPath, mainPath, exclude){
 	var excludes = (exclude||'').split(',')
 	var srcPath = path.join(hostPath, config.path.src)
-	var mainFilepath = path.join(srcPath, mainPath)
-	var mainSource = file.getSource(mainFilepath)
+	var mainSource = file.getSource(path.join(srcPath, mainPath))
 
 	return new Promise(function(resolve, reject) {
 		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
