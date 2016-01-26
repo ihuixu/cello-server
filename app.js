@@ -29,6 +29,12 @@ exports.start = function(config){
 
 	function onRequest(req, res){
 		var hostname = req.headers.host
+
+		if(!config.hosts[hostname]){
+			return res.end('console.log("Not exist: config.hosts['+ hostname +']!")')
+		}
+
+
 		var hostPath = path.join(config.hosts[hostname])
 
 		var fileArray = req.url.split('/')
