@@ -1,5 +1,4 @@
 {
-    "xhdev.cello.com": "cello-static"
-    ,"xhviolin.cello.com": "violin-apps/static"
-    ,"xhxiaoyemian.cello.com": "xiaoyemian/static"
+    "demo.cello.com": "cello-static",
+    "demo2.cello.com": "cello-static2"
 }
