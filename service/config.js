@@ -2,7 +2,7 @@ var fs = require('fs')
 var path = require('path')
 var objectAssign = require('object-assign');
 
-var defaultConfig = require('./config.json')
+var defaultConfig = require('../config.json')
 
 module.exports = function(config){
 	config = objectAssign(defaultConfig, config || {})
