@@ -25,24 +25,11 @@ function getName(urlpath){
 	return urlpath.replace(reg, '')
 }
 
-exports.start = function(config){
+function setConfig(config){
 	config = objectAssign(defaultConfig, config || {})
-	var outputed = {}
 
-	function onRequest(req, res){
-		var hostname = req.headers.host
-
-		if(!config.hosts[hostname]){
-			send(400, 'Not exist: config.hosts['+ hostname +']!')
-			return; 
-		}
-
-
+	for(var hostname in config.hosts){
 		var hostPath = path.join(config.hosts[hostname])
-
-		var fileArray = req.url.split('/')
-		var fileOption = fileArray.splice(0,2).join('').split('~')
-		var filePath = fileArray.join('/')
 
 		config[hostname] = {
 			path:{
@@ -60,18 +47,41 @@ exports.start = function(config){
 			if(fs.existsSync(configPath))
 				configs = fs.readdirSync(configPath)
 
-				for(var i in configs){
-					(function(i){
-					 var configname = configs[i]
-					 var name = configname.replace('.json','') 
-					 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
-					 var obj = JSON.parse(content)
+			for(var i in configs){
+				(function(i){
+				 var configname = configs[i]
+				 var name = configname.replace('.json','') 
+				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
+				 var obj = JSON.parse(content)
 
-					 config[hostname][name] = objectAssign(config[hostname][name]||{}, obj)
+				 config[hostname][name] = objectAssign(config[hostname][name]||{}, obj)
 
-					 })(i);
-				}
+				 })(i);
+			}
 		}
+
+	}
+
+	return config
+}
+
+exports.start = function(config){
+	var outputed = {}
+	config = setConfig(config) 
+
+	function onRequest(req, res){
+		var hostname = req.headers.host
+
+		if(!config.hosts[hostname]){
+			send(400, 'Not exist: config.hosts['+ hostname +']!')
+			return; 
+		}
+
+		var hostPath = path.join(config.hosts[hostname])
+
+		var fileArray = req.url.split('/')
+		var fileOption = fileArray.splice(0,2).join('').split('~')
+		var filePath = fileArray.join('/')
 
 		var modName = getName(filePath)
 
@@ -148,6 +158,16 @@ exports.start = function(config){
 	}
 
 	http.createServer(onRequest).listen(config.onPort || 80)
+}
+
+exports.compile = function(config){
+	config = setConfig(config) 
+	console.log(config)
+
+	for(var hostname in config.hosts){
+		console.log(hostname)
+	}
+
 }
 
 
