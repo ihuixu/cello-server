@@ -5,69 +5,25 @@ var UglifyJS = require("uglify-js");
 var commonJS = require('./base/commonJS')
 var commonCSS = require('./base/commonCSS')
 var vueJS = require('./base/vueJS')
-var objectAssign = require('object-assign');
-
-var defaultConfig = require('./config.json')
+var getConfig = require('./config')
 
 var defaultJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, './lib/loader.js'), 'utf8')
 	, 'vue' : fs.readFileSync(path.join(__dirname, './lib/vue.js'), 'utf8')
 }
-
 var defaultCSS = {
 	'cssresetwww': fs.readFileSync(path.join(__dirname, './lib/cssresetwww.less'), 'utf8')
 	,'cssresetm': fs.readFileSync(path.join(__dirname, './lib/cssresetm.less'), 'utf8')
 }
-
 
 function getName(urlpath){
 	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))$', 'g')
 	return urlpath.replace(reg, '')
 }
 
-function setConfig(config){
-	config = objectAssign(defaultConfig, config || {})
-
-	for(var hostname in config.hosts){
-		var hostPath = path.join(config.hosts[hostname])
-
-		config[hostname] = {
-			path:{
-				"src":"./src/"
-				, "dist":"./dist/"
-				, "less":"./less/"
-				, "components":"./components/"
-			}
-		}
-
-		if(fs.existsSync(hostPath)){
-			var configs = {}
-			var configPath = path.join(hostPath, 'config')
-
-			if(fs.existsSync(configPath))
-				configs = fs.readdirSync(configPath)
-
-			for(var i in configs){
-				(function(i){
-				 var configname = configs[i]
-				 var name = configname.replace('.json','') 
-				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
-				 var obj = JSON.parse(content)
-
-				 config[hostname][name] = objectAssign(config[hostname][name]||{}, obj)
-
-				 })(i);
-			}
-		}
-
-	}
-
-	return config
-}
-
 exports.start = function(config){
 	var outputed = {}
-	config = setConfig(config) 
+	config = getConfig(config) 
 
 	function onRequest(req, res){
 		var hostname = req.headers.host
@@ -81,11 +37,12 @@ exports.start = function(config){
 
 		var fileArray = req.url.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')
+		var fileType = fileOption[0]
 		var filePath = fileArray.join('/')
 
 		var modName = getName(filePath)
 
-		switch(fileOption[0]){
+		switch(fileType){
 			case 'src' : 
 				if(defaultJS[modName]){
 					send(200, defaultJS[modName], 'js')
@@ -97,7 +54,6 @@ exports.start = function(config){
 						})
 				}
 				break;
-
 
 			case 'dist' : 
 				if(defaultJS[modName]){
@@ -161,11 +117,16 @@ exports.start = function(config){
 }
 
 exports.compile = function(config){
-	config = setConfig(config) 
+	config = getConfig(config) 
 	console.log(config)
 
 	for(var hostname in config.hosts){
-		console.log(hostname)
+		var srcPath = path.join(config.hosts[hostname], config[hostname].path.src)
+		var distPath = path.join(config.hosts[hostname], config[hostname].path.dist)
+		var lessPath = path.join(config.hosts[hostname], config[hostname].path.less)
+		var cssPath = path.join(config.hosts[hostname], config[hostname].path.css)
+
+		console.log(distPath)
 	}
 
 }
