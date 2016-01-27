@@ -5,7 +5,7 @@ var UglifyJS = require("uglify-js");
 var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
-var getConfig = require('./config')
+var getConfig = require('../config')
 
 var defaultJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
@@ -21,6 +21,17 @@ function getName(urlpath){
 	return urlpath.replace(reg, '')
 }
 
-function compile(hostname){
+module.exports = function(config){
+	config = getConfig(config) 
+
+	for(var hostname in config.hosts){
+		var srcPath = path.join(config.hosts[hostname], config[hostname].path.src)
+		var distPath = path.join(config.hosts[hostname], config[hostname].path.dist)
+		var lessPath = path.join(config.hosts[hostname], config[hostname].path.less)
+		var cssPath = path.join(config.hosts[hostname], config[hostname].path.css)
+
+		console.log(distPath)
+	}
+
 }
 

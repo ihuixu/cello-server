@@ -5,7 +5,7 @@ var UglifyJS = require("uglify-js");
 var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
-var getConfig = require('./config')
+var getConfig = require('../config')
 
 var defaultJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
