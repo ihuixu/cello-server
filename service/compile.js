@@ -21,16 +21,26 @@ function getName(urlpath){
 	return urlpath.replace(reg, '')
 }
 
+function compileJS(srcPath, distPath){
+
+	var jss = fs.readdirSync(srcPath)
+	console.log(jss)
+}
+
+function compile(hostname, config){
+	var srcPath = path.join(config.hosts[hostname], config[hostname].path.src)
+	var distPath = path.join(config.hosts[hostname], config[hostname].path.dist)
+	var lessPath = path.join(config.hosts[hostname], config[hostname].path.less)
+	var cssPath = path.join(config.hosts[hostname], config[hostname].path.css)
+
+	compileJS(srcPath, distPath)
+} 
+
 module.exports = function(config){
 	config = getConfig(config) 
 
 	for(var hostname in config.hosts){
-		var srcPath = path.join(config.hosts[hostname], config[hostname].path.src)
-		var distPath = path.join(config.hosts[hostname], config[hostname].path.dist)
-		var lessPath = path.join(config.hosts[hostname], config[hostname].path.less)
-		var cssPath = path.join(config.hosts[hostname], config[hostname].path.css)
-
-		console.log(distPath)
+		compile(hostname, config)
 	}
 
 }
