@@ -4,6 +4,5 @@
     "demo2.cello.com": "../cello-static2"
 	},
 	"max_time": 3000,
-	"isDebug": true,
 	"onPort": 6144
 }
