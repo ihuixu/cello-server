@@ -18,28 +18,20 @@ module.exports = function(config){
 				, "css":"./css/"
 				, "components":"./components/"
 			}
+			, depends : {}
 		}
 
 		if(fs.existsSync(hostPath)){
-			var configs = {}
-			var configPath = path.join(hostPath, 'config')
+			var configPath = path.join(hostPath, 'config.json')
 
-			if(fs.existsSync(configPath))
-				configs = fs.readdirSync(configPath)
+			if(fs.existsSync(configPath)){
+				var appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 
-			for(var i in configs){
-				(function(i){
-				 var configname = configs[i]
-				 var name = configname.replace('.json','') 
-				 var content = fs.readFileSync(path.join(configPath, configname), 'utf8')
-				 var obj = JSON.parse(content)
-
-				 config[hostname][name] = objectAssign(config[hostname][name]||{}, obj)
-
-				 })(i);
+				for(var name in config[hostname]){
+					config[hostname][name] = objectAssign(config[hostname][name] , appConfig[name])
+				}
 			}
 		}
-
 	}
 
 	return config

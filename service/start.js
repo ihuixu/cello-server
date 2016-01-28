@@ -43,7 +43,7 @@ module.exports = function(config){
 					send(200, defaultJS[modName], 'js')
 
 				}else{
-					commonJS(config[hostname], hostPath, modName, fileOption[1])
+					commonJS(config[hostname], hostPath, modName)
 						.then(function(source){
 							send(200, source, 'js')
 						})
@@ -55,7 +55,7 @@ module.exports = function(config){
 					send(200, defaultJS[modName], 'js')
 
 				}else{
-					commonJS(config[hostname], hostPath, modName, fileOption[1])
+					commonJS(config[hostname], hostPath, modName)
 						.then(function(source){
 							send(200, UglifyJS.minify(source, {fromString: true}).code, 'js')
 						})

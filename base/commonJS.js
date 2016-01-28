@@ -9,8 +9,8 @@ var defaultJS = {
 	, 'vue' : fs.readFileSync(path.join(__dirname, '../lib/vue.js'), 'utf8')
 }
 
-module.exports = function(config, hostPath, mainPath, exclude){
-	var excludes = (exclude||'').split(',')
+module.exports = function(config, hostPath, mainPath){
+	var excludes = config.depends.global || []
 	var srcPath = path.join(hostPath, config.path.src)
 	var mainSource = file.getSource(path.join(srcPath, mainPath))
 
