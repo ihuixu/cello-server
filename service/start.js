@@ -1,5 +1,4 @@
 var http = require('http')
-var fs = require('fs')
 var path = require('path')
 var UglifyJS = require("uglify-js");
 var commonJS = require('../base/commonJS')
