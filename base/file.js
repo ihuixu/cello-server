@@ -26,3 +26,24 @@ exports.getJSContent = function(modPath, modSource){
 	return jsfile
 }
 
+function mkFile(fileName, content){
+  fs.createWriteStream(fileName, {
+    flags: "w",
+    encoding: "utf-8",
+    mode: 0666
+  }).write(content + "\n");
+}
+
+function readFile(fileName){
+  var file = fs.readFileSync(fileName, 'utf-8')
+  return file
+}
+
+function readDir(dirName){
+  var files = fs.readdirSync(dirName)
+  return files
+}
+
+exports.mkFile = mkFile
+exports.readFile = readFile
+exports.readDir = readDir
