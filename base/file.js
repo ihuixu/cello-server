@@ -32,6 +32,8 @@ function mkFile(fileName, content){
     encoding: "utf-8",
     mode: 0666
   }).write(content + "\n");
+
+	console.log('updateFile', fileName)
 }
 
 function readFile(fileName){

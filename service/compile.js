@@ -59,14 +59,12 @@ module.exports = function(config){
 						if(defaultJS[modName]){
 							var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
 							file.mkFile(distFilePath, content)
-							console.log('updateFile', distFilePath)
 
 						}else{
 							commonJS(config[hostname], hostPath, modName)
 								.then(function(source){
 									var content = UglifyJS.minify(source, {fromString: true}).code
 									file.mkFile(distFilePath, content)
-									console.log('updateFile', distFilePath)
 								})
 						}
 
