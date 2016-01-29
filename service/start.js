@@ -49,18 +49,6 @@ module.exports = function(config){
 				}
 				break;
 
-			case 'dist' : 
-				if(defaultJS[modName]){
-					send(200, UglifyJS.minify(defaultJS[modName], {fromString: true}).code, 'js')
-
-				}else{
-					commonJS(config[hostname], hostPath, modName)
-						.then(function(source){
-							send(200, UglifyJS.minify(source, {fromString: true}).code, 'js')
-						})
-				}
-				break;
-
 			case 'components' : 
 				vueJS(config[hostname], hostPath, modName)
 					.then(function(source){

@@ -21,12 +21,9 @@ function getName(urlpath){
 module.exports = function(config){
 	config = getConfig(config) 
 
-/*
 	for(var hostname in config.hosts){
 		compile(hostname)
 	}
-*/
-	compile('xhxiaoyemian.cello.com')
 
 	function compile(hostname){
 		var hostPath = config.hosts[hostname]
