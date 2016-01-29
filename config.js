@@ -1,6 +1,7 @@
 var fs = require('fs')
 var path = require('path')
 var objectAssign = require('object-assign');
+var file = require('./base/file')
 
 var defaultConfig = require('./config.json')
 
@@ -19,19 +20,26 @@ module.exports = function(config){
 	config = objectAssign({}, defaultConfig, config || {})
 
 	for(var hostname in config.hosts){
-		var hostPath = path.join(config.hosts[hostname])
+		setConfig(hostname)
+	}
 
-		if(!fs.existsSync(hostPath)) continue;
+	function setConfig(hostname){
+		var hostPath = path.join(config.hosts[hostname])
+		if(!fs.existsSync(hostPath)) return;
 
 		var configPath = path.join(hostPath, 'config.json')
+		var appConfig = {}
+		if(fs.existsSync(configPath))
+			appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 
-		if(!fs.existsSync(configPath)) continue;
-
-		var appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
+		appConfig.HOST_NAME = hostname
+		file.mkFile(configPath, JSON.stringify(appConfig))
 
 		for(var name in defaultAppConfig){
 			appConfig[name] = objectAssign({}, defaultAppConfig[name], appConfig[name])
 		}
+
 
 		config[hostname] = appConfig
 	}
