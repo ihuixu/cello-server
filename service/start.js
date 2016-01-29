@@ -51,7 +51,7 @@ module.exports = function(config){
 
 			case 'dist' : 
 				if(defaultJS[modName]){
-					send(200, defaultJS[modName], 'js')
+					send(200, UglifyJS.minify(defaultJS[modName], {fromString: true}).code, 'js')
 
 				}else{
 					commonJS(config[hostname], hostPath, modName)

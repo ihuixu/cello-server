@@ -21,41 +21,73 @@ function getName(urlpath){
 module.exports = function(config){
 	config = getConfig(config) 
 
-	function compileJS(hostname){
-		var srcPath = path.join(config.hosts[hostname], config[hostname].path.src)
-		var distPath = path.join(config.hosts[hostname], config[hostname].path.dist)
-
-		var jss = fs.readdirSync(srcPath)
-
-		console.log(jss)
-		for(var fileName in jss){
-
-			if(defaultJS[modName]){
-				var content = defaultJS[modName]
-				file.mkFile(fileName, content)
-
-			}else{
-				commonJS(config[hostname], hostPath, modName)
-					.then(function(source){
-						var content = UglifyJS.minify(source, {fromString: true}).code
-						file.mkFile(fileName, content)
-					})
-			}
-		}
-	}
-
-	function compileCSS(hostname){
-		var lessPath = path.join(config.hosts[hostname], config[hostname].path.less)
-		var cssPath = path.join(config.hosts[hostname], config[hostname].path.css)
-
-		var css = fs.readdirSync(lessPath)
-
-		console.log(css)
-	}
-
+/*
 	for(var hostname in config.hosts){
-		compileJS(hostname)
-		//compileCSS(hostname)
+		compile(hostname)
+	}
+*/
+	compile('xhxiaoyemian.cello.com')
+
+	function compile(hostname){
+		var hostPath = config.hosts[hostname]
+		var appPath = config[hostname]
+
+		var srcPath = path.join(hostPath, appPath.path.src)
+		var distPath = path.join(hostPath, appPath.path.dist)
+		
+		var lessPath = path.join(hostPath, appPath.path.less)
+		var cssPath = path.join(hostPath, appPath.path.css)
+
+		if(!fs.existsSync(distPath)){
+			fs.mkdirSync(distPath)
+		}
+		compileJS('./')
+
+		function compileJS(basePath){
+			var files = fs.readdirSync(path.join(srcPath, basePath))
+
+			files.map(function(filename){
+				var filePath = path.join(basePath, filename)
+				var distFilePath = path.join(distPath, filePath)
+
+				switch(path.extname(filename)){
+					case '.js' :
+						var modName = getName(filePath)
+
+						if(defaultJS[modName]){
+							var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
+							file.mkFile(distFilePath, content)
+							console.log('updateFile', distFilePath)
+
+						}else{
+							commonJS(config[hostname], hostPath, modName)
+								.then(function(source){
+									var content = UglifyJS.minify(source, {fromString: true}).code
+									file.mkFile(distFilePath, content)
+									console.log('updateFile', distFilePath)
+								})
+						}
+
+						break;
+	
+
+					default :
+						if(!fs.existsSync(distFilePath)){
+							fs.mkdirSync(distFilePath)
+							console.log('mkdir', distFilePath)
+						}
+						compileJS(filePath)
+						break;
+				}
+
+			})
+		} 
+
+		function compileCSS(hostname){
+			var css = fs.readdirSync(lessPath)
+
+			console.log(css)
+		}
 	}
 
 }
