@@ -27,6 +27,11 @@ module.exports = function(config){
 
 	function compile(hostname){
 		var hostPath = config.hosts[hostname]
+
+		if(!fs.existsSync(hostPath)){
+			return;
+		}
+
 		var appPath = config[hostname]
 
 		var srcPath = path.join(hostPath, appPath.path.src)

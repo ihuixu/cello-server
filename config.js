@@ -16,24 +16,24 @@ var defaultAppConfig = {
 }
 
 module.exports = function(config){
-	config = objectAssign(defaultConfig, config || {})
+	config = objectAssign({}, defaultConfig, config || {})
 
 	for(var hostname in config.hosts){
 		var hostPath = path.join(config.hosts[hostname])
 
-		if(fs.existsSync(hostPath)){
-			var configPath = path.join(hostPath, 'config.json')
+		if(!fs.existsSync(hostPath)) continue;
 
-			if(fs.existsSync(configPath)){
-				var appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+		var configPath = path.join(hostPath, 'config.json')
 
-				for(var name in defaultAppConfig){
-					appConfig[name] = objectAssign(defaultAppConfig[name], appConfig[name])
-				}
+		if(!fs.existsSync(configPath)) continue;
 
-				config[hostname] = appConfig
-			}
+		var appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+
+		for(var name in defaultAppConfig){
+			appConfig[name] = objectAssign({}, defaultAppConfig[name], appConfig[name])
 		}
+
+		config[hostname] = appConfig
 	}
 
 	console.log(config)

@@ -77,7 +77,7 @@ function getTags(mainSource){
 				return;
 
 			var opts = new Function('var opts={};opts.' + (/=/.test(attr) ? attr : attr+'=true') + ';return opts;')()
-			source = objectAssign(source, opts)
+			source = objectAssign({}, source, opts)
 		})
 
 		tags[name].push(source)
