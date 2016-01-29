@@ -52,5 +52,6 @@ function readDir(dirName){
 }
 
 exports.mkFile = mkFile
+exports.mkDir = mkDir
 exports.readFile = readFile
 exports.readDir = readDir
