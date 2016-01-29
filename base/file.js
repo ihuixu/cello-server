@@ -36,6 +36,11 @@ function mkFile(fileName, content){
 	console.log('updateFile', fileName)
 }
 
+function mkDir(dirName){
+	fs.mkdirSync(dirName)
+	console.log('mkdir', dirName)
+}
+
 function readFile(fileName){
   var file = fs.readFileSync(fileName, 'utf-8')
   return file

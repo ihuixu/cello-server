@@ -41,7 +41,7 @@ module.exports = function(config){
 		var cssPath = path.join(hostPath, appPath.path.css)
 
 		if(!fs.existsSync(distPath)){
-			fs.mkdirSync(distPath)
+			file.mkDir(distPath)
 		}
 		compileJS('./')
 
@@ -73,8 +73,7 @@ module.exports = function(config){
 
 					default :
 						if(!fs.existsSync(distFilePath)){
-							fs.mkdirSync(distFilePath)
-							console.log('mkdir', distFilePath)
+							file.mkDir(distFilePath)
 						}
 						compileJS(filePath)
 						break;
