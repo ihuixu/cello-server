@@ -4,22 +4,22 @@ var objectAssign = require('object-assign');
 
 var defaultConfig = require('./config.json')
 
+var defaultAppConfig = {
+	path:{
+		"src":"./src/"
+		, "dist":"./dist/"
+		, "less":"./less/"
+		, "css":"./css/"
+		, "components":"./components/"
+	}
+	, depends : {}
+}
+
 module.exports = function(config){
 	config = objectAssign(defaultConfig, config || {})
 
 	for(var hostname in config.hosts){
 		var hostPath = path.join(config.hosts[hostname])
-
-		config[hostname] = {
-			path:{
-				"src":"./src/"
-				, "dist":"./dist/"
-				, "less":"./less/"
-				, "css":"./css/"
-				, "components":"./components/"
-			}
-			, depends : {}
-		}
 
 		if(fs.existsSync(hostPath)){
 			var configPath = path.join(hostPath, 'config.json')
@@ -27,13 +27,16 @@ module.exports = function(config){
 			if(fs.existsSync(configPath)){
 				var appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
 
-				for(var name in config[hostname]){
-					config[hostname][name] = objectAssign(config[hostname][name] , appConfig[name])
+				for(var name in defaultAppConfig){
+					appConfig[name] = objectAssign(defaultAppConfig[name], appConfig[name])
 				}
+
+				config[hostname] = appConfig
 			}
 		}
 	}
 
+	console.log(config)
 	return config
 }
 
