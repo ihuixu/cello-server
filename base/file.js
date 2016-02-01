@@ -2,6 +2,9 @@ var path = require('path')
 var fs = require('fs')
 
 exports.getSource = function(filePath){
+	var filePaths = filePath.split('?')
+	filePath = filePaths[0]
+
 	if(!path.extname(filePath))
 		filePath += '.js'
 
