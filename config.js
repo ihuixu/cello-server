@@ -29,11 +29,13 @@ module.exports = function(config){
 
 		var configPath = path.join(hostPath, 'config.json')
 		var appConfig = {}
+
 		if(fs.existsSync(configPath)){
-			appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8')) || {}
+			appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
 		}
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
 		appConfig.HOST_NAME = hostname
+
 		file.mkFile(configPath, JSON.stringify(appConfig))
 
 		for(var name in defaultAppConfig){
