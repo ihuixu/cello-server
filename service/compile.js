@@ -43,9 +43,19 @@ module.exports = function(config){
 		if(!fs.existsSync(distPath)){
 			file.mkDir(distPath)
 		}
+
+		if(!fs.existsSync(cssPath)){
+			file.mkDir(cssPath)
+		}
+
 		compileJS('./')
+		compileCSS('./')
 
 		function compileJS(basePath){
+			if(!fs.existsSync(srcPath)){
+				file.mkDir(srcPath)
+			}
+
 			var files = fs.readdirSync(path.join(srcPath, basePath))
 
 			files.map(function(filename){
@@ -82,10 +92,45 @@ module.exports = function(config){
 			})
 		} 
 
-		function compileCSS(hostname){
-			var css = fs.readdirSync(lessPath)
+		function compileCSS(basePath){
 
-			console.log(css)
+			if(!fs.existsSync(lessPath)){
+				file.mkDir(lessPath)
+			}
+
+			var files = fs.readdirSync(path.join(lessPath, basePath))
+
+			files.map(function(filename){
+				var filePath = path.join(basePath, filename)
+				var distFilePath = path.join(cssPath, filePath)
+
+				switch(path.extname(filename)){
+					case '.less' :
+						var modName = getName(filePath)
+						var content = defaultCSS[modName]
+
+						if(content){
+							file.mkFile(distFilePath, content)
+
+						}else{
+							commonCSS(config[hostname], hostPath, modName)
+								.then(function(source){
+									file.mkFile(distFilePath, source)
+								})
+						}
+
+						break;
+	
+
+					default :
+						if(!fs.existsSync(distFilePath)){
+							file.mkDir(distFilePath)
+						}
+						compileCSS(filePath)
+						break;
+				}
+
+			})
 		}
 	}
 
