@@ -28,6 +28,7 @@ module.exports = function(config){
 		if(!fs.existsSync(hostPath)) return;
 
 		var configPath = path.join(hostPath, 'config.json')
+	 console.log(configPath, 111111111)
 		var appConfig = {}
 
 		if(fs.existsSync(configPath)){
@@ -36,7 +37,7 @@ module.exports = function(config){
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
 		appConfig.HOST_NAME = hostname
 
-		file.mkFile(configPath, JSON.stringify(appConfig))
+		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
 		for(var name in defaultAppConfig){
 			appConfig[name] = objectAssign({}, defaultAppConfig[name], appConfig[name])
