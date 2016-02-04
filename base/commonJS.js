@@ -4,10 +4,8 @@ var vueJS = require('./vueJS')
 var Promise = require('bluebird')
 var file = require('./file')
 
-var defaultJS = {
-	'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
-	, 'vue' : fs.readFileSync(path.join(__dirname, '../lib/vue.js'), 'utf8')
-}
+var defaults = require('../base/defaults')
+var defaultJS = defaults.defaultJS
 
 module.exports = function(config, hostPath, mainPath){
 	var excludes = config.depends.global || []
