@@ -13,7 +13,7 @@ var defaultAppConfig = {
 		, "css":"./css/"
 		, "components":"./components/"
 	}
-	, depends : {}
+	, depends : {global:[]}
 }
 
 module.exports = function(config){
@@ -28,11 +28,11 @@ module.exports = function(config){
 		if(!fs.existsSync(hostPath)) return;
 
 		var configPath = path.join(hostPath, 'config.json')
-	 console.log(configPath, 111111111)
 		var appConfig = {}
 
 		if(fs.existsSync(configPath)){
-			appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
+			var content = fs.readFileSync(configPath, 'utf8')
+			appConfig = JSON.parse(content||'{}')
 		}
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
 		appConfig.HOST_NAME = hostname
@@ -43,11 +43,9 @@ module.exports = function(config){
 			appConfig[name] = objectAssign({}, defaultAppConfig[name], appConfig[name])
 		}
 
-
 		config[hostname] = appConfig
 	}
 
-	console.log(config)
 	return config
 }
 
