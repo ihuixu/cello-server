@@ -5,8 +5,6 @@ var file = require('./base/file')
 
 var defaultConfig = require('./config.json')
 
-var now = new Date()
-
 var defaultAppConfig = {
 	path:{
 		src:"./src/"
@@ -17,7 +15,7 @@ var defaultAppConfig = {
 	}
 	, isDebug : true
 	, depends : {global:[]}
-	, version : [now.getFullYear(), now.getMonth()+1, now.getDay(), '00000'].join('')-0
+	, version : 1
 }
 
 module.exports = function(config){
