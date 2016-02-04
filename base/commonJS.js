@@ -29,7 +29,7 @@ module.exports = function(config, hostPath, mainPath){
 		}
 
 		function getDepends(modPath, modSource){
-			modSource = modSource.replace(/\/\/([^,;\n]*)/ig, '')
+			modSource = modSource.replace(/(\/\/([^,;\n]*))|(\/\*([^]*)\*\/)/ig, '\n')
 
 			var requires = modSource.match(reg) || []
 			len += requires.length
