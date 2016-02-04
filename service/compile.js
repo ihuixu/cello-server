@@ -40,12 +40,20 @@ module.exports = function(config){
 		var lessPath = path.join(hostPath, appPath.path.less)
 		var cssPath = path.join(hostPath, appPath.path.css)
 
+
 		if(!fs.existsSync(distPath)){
 			file.mkDir(distPath)
 		}
 
 		if(!fs.existsSync(cssPath)){
 			file.mkDir(cssPath)
+		}
+
+		for(var i in defaultJS){
+			file.mkFile(path.join(distPath, i+'.js'), defaultJS[i])
+		}
+		for(var i in defaultCSS){
+			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
 		}
 
 		compileJS('./')
