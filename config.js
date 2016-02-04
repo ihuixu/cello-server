@@ -5,15 +5,19 @@ var file = require('./base/file')
 
 var defaultConfig = require('./config.json')
 
+var now = new Date()
+
 var defaultAppConfig = {
 	path:{
-		"src":"./src/"
-		, "dist":"./dist/"
-		, "less":"./less/"
-		, "css":"./css/"
-		, "components":"./components/"
+		src:"./src/"
+		, dist:"./dist/"
+		, less:"./less/"
+		, css:"./css/"
+		, components:"./components/"
 	}
+	, isDebug : true
 	, depends : {global:[]}
+	, version : [now.getFullYear(), now.getMonth(), now.getDay(), now.getHours(), 0].join('')-0
 }
 
 module.exports = function(config){
@@ -25,23 +29,35 @@ module.exports = function(config){
 
 	function setConfig(hostname){
 		var hostPath = path.join(config.hosts[hostname])
+
 		if(!fs.existsSync(hostPath)) return;
 
 		var configPath = path.join(hostPath, 'config.json')
-		var appConfig = {}
+		var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
 
 		if(fs.existsSync(configPath)){
-			var content = fs.readFileSync(configPath, 'utf8')
-			appConfig = JSON.parse(content||'{}')
+			configs = JSON.parse(fs.readFileSync(configPath, 'utf8')||'{}')
+
+			for(var name in configs){
+				if(typeof configs[name] == 'object'){
+					appConfig[name] = objectAssign({}, appConfig[name], configs[name])
+
+				}else if(name == 'version'){
+
+					if(configs[name]){
+						appConfig[name] = configs[name]+1
+					}
+
+				}else{
+					appConfig[name] = appConfig[name] || configs[name]
+
+				}
+			}
 		}
+
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
-		appConfig.HOST_NAME = hostname
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
-
-		for(var name in defaultAppConfig){
-			appConfig[name] = objectAssign({}, defaultAppConfig[name], appConfig[name])
-		}
 
 		config[hostname] = appConfig
 	}
