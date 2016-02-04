@@ -27,14 +27,6 @@ startService() {
 	cd $rf'../' && nohup node server.js >> $log &
 
 }
-compile(){
-	logf=$rf'../log/compile/'` date +%Y/%m/` 
-	log=$logf`date +%d`'.log'
-	mkdir -p $logf
-	echo 'compile static files'
-	cd $rf'../' && node compile.js >> $log &
-	tail -f $log
-}
 
 if [ $# -eq 0 ];then
 	echo "you should pass args start|restart|stop"	
@@ -49,9 +41,6 @@ else
 		"restart") 
 			stopService
 			startService
-			;;
-		"compile") 
-			compile	
 			;;
 	esac
 fi	

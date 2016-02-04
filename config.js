@@ -17,7 +17,7 @@ var defaultAppConfig = {
 	}
 	, isDebug : true
 	, depends : {global:[]}
-	, version : [now.getFullYear(), now.getMonth(), now.getDay(), now.getHours(), 0].join('')-0
+	, version : [now.getFullYear(), now.getMonth()+1, now.getDay(), '00000'].join('')-0
 }
 
 module.exports = function(config){

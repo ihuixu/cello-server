@@ -11,8 +11,9 @@ var defaultJS = defaults.defaultJS
 var defaultCSS = defaults.defaultCSS
 
 function getName(urlpath){
-	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))$', 'g')
-	return urlpath.replace(reg, '')
+	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))', 'g')
+	var names = urlpath.replace(reg, '').split('?')
+	return names[0]
 }
 
 module.exports = function(config){
