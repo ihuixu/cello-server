@@ -52,7 +52,7 @@ module.exports = function(config){
 		for(var modName in defaultJS){
 			try{
 				var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
-				file.mkFile(distFilePath, content)
+				file.mkFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){
 				console.log('error compile', modName, err)
