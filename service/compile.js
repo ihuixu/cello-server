@@ -49,8 +49,14 @@ module.exports = function(config){
 			file.mkDir(cssPath)
 		}
 
-		for(var i in defaultJS){
-			file.mkFile(path.join(distPath, i+'.js'), defaultJS[i])
+		for(var modName in defaultJS){
+			try{
+				var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
+				file.mkFile(distFilePath, content)
+
+			}catch(err){
+				console.log('error compile', modName, err)
+			}
 		}
 		for(var i in defaultCSS){
 			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
