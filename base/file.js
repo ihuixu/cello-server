@@ -20,8 +20,6 @@ exports.getSource = function(filePath){
 exports.getJSContent = function(modPath, modSource){
 	var jsfile = ''
 	if(modSource){
-		console.log(modPath)
-
 		jsfile = 'define("' + modPath + '",function(require, exports){\n' + modSource + '\n});\n'
 
 	}else{
