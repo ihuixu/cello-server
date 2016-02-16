@@ -4,8 +4,8 @@ var Promise = require('bluebird')
 var file = require('./file')
 var less = require('less')
 
-module.exports = function(config, hostPath, mainPath){
-	var lessPath = path.join(hostPath, config.path.less)
+module.exports = function(config, mainPath){
+	var lessPath = path.join(config.hostPath, config.path.less)
 	var mainFilepath = path.join(lessPath, mainPath+'.less')
 	var mainSource = file.getSource(mainFilepath)
 

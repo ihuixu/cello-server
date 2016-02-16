@@ -18,9 +18,9 @@ var method = {
 	}
 }
 
-module.exports = function(config, hostPath, mainPath){
-	var componentsPath = path.join(hostPath, config.path.components)
-		, lessPath = path.join(hostPath, config.path.less)
+module.exports = function(config, mainPath){
+	var componentsPath = path.join(config.hostPath, config.path.components)
+		, lessPath = path.join(config.hostPath, config.path.less)
 
 	var filePath = path.join(componentsPath, mainPath)
 	var mainSource = file.getSource(filePath)

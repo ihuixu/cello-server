@@ -7,9 +7,9 @@ var file = require('./file')
 var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
 
-module.exports = function(config, hostPath, mainPath){
+module.exports = function(config, mainPath){
 	var excludes = config.depends.global || []
-	var srcPath = path.join(hostPath, config.path.src)
+	var srcPath = path.join(config.hostPath, config.path.src)
 	var mainSource = file.getSource(path.join(srcPath, mainPath))
 
 	return new Promise(function(resolve, reject) {
@@ -59,7 +59,7 @@ module.exports = function(config, hostPath, mainPath){
 
 					switch(path.extname(modName)){
 						case '.vue':
-							vueJS(config, hostPath, modName).then(function(source){
+							vueJS(config, modName).then(function(source){
 								code.push(file.getJSContent(modName, source))
 								getDepends(modName, source)
 

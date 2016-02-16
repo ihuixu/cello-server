@@ -25,7 +25,7 @@ module.exports = function(config){
 		var hostname = ''
 		var requrl = ''
 
-		for(var name in config.hosts){
+		for(var name in config.apps){
 			var reg = new RegExp(name, 'ig')
 			if(reg.test(hosturl)){
 				hostname = name
@@ -33,14 +33,12 @@ module.exports = function(config){
 			}
 		}
 
-
 		if(!hostname){
 			console.log('error', 'Not exist: config.hosts['+ hostname +']!')
 			send(400, 'Not exist: config.hosts['+ hostname +']!')
 			return; 
 		}
-
-		var hostPath = path.join(config.appPath, config.hosts[hostname])
+		var appConfig = config.apps[hostname]
 
 		var fileArray = requrl.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')
@@ -55,7 +53,7 @@ module.exports = function(config){
 					send(200, defaultJS[modName], 'js')
 
 				}else{
-					commonJS(config[hostname], hostPath, modName)
+					commonJS(appConfig, modName)
 						.then(function(source){
 							send(200, source, 'js')
 						})
@@ -63,7 +61,7 @@ module.exports = function(config){
 				break;
 
 			case 'components' : 
-				vueJS(config[hostname], hostPath, modName)
+				vueJS(appConfig, modName)
 					.then(function(source){
 						send(200, source, 'js')
 					})
@@ -74,7 +72,7 @@ module.exports = function(config){
 					send(200, defaultCSS[modName], 'css')
 
 				}else{
-					commonCSS(config[hostname], hostPath, modName)
+					commonCSS(appConfig, modName)
 						.then(function(source){
 							send(200, source, 'css')
 						})

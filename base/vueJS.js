@@ -5,9 +5,9 @@ var component = require('./component')
 
 var tagnames = ['style', 'template', 'script']
 
-module.exports = function(config, hostPath, mainPath){
+module.exports = function(config, mainPath){
 	return new Promise(function(resolve, reject) {
-		var comp = component(config, hostPath, mainPath)
+		var comp = component(config, mainPath)
 		var components = comp.components
 		var name = comp.name
 
