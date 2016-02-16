@@ -21,9 +21,20 @@ module.exports = function(config){
 	config = getConfig(config) 
 
 	function onRequest(req, res){
-		var hostname = req.headers.host
+		var hosturl = req.headers.host + req.url 
+		var hostname = ''
+		var requrl = ''
 
-		if(!config.hosts[hostname]){
+		for(var name in config.hosts){
+			var reg = new RegExp(name, 'ig')
+			if(reg.test(hosturl)){
+				hostname = name
+				requrl = hosturl.replace(reg, '')
+			}
+		}
+
+
+		if(!hostname){
 			console.log('error', 'Not exist: config.hosts['+ hostname +']!')
 			send(400, 'Not exist: config.hosts['+ hostname +']!')
 			return; 
@@ -31,7 +42,7 @@ module.exports = function(config){
 
 		var hostPath = path.join(config.appPath, config.hosts[hostname])
 
-		var fileArray = req.url.split('/')
+		var fileArray = requrl.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')
 		var fileType = fileOption[0]
 		var filePath = fileArray.join('/')
@@ -77,7 +88,7 @@ module.exports = function(config){
 
 		function send(state, content, filetype){
 			var now = new Date
-			var lastModified = outputed[req.url] || (new Date).toUTCString()
+			var lastModified = outputed[hosturl] || (new Date).toUTCString()
 			var expires = new Date(now.getFullYear() , now.getMonth() , now.getDate()+30)
 
 			var contentType = 'text/plain'
@@ -90,7 +101,7 @@ module.exports = function(config){
 					"Expires" : expires.toUTCString()
 			});
 
-			outputed[req.url] = lastModified
+			outputed[hosturl] = lastModified
 
 			res.write(content || '')
 			res.end()
