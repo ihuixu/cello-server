@@ -1,8 +1,8 @@
 {
 	"appPath": "../",
 	"hosts": {
-    "demo.cello.com": "cello-static",
-    "demo2.cello.com": "cello-static2"
+	},
+	"apps": {
 	},
 	"max_time": 3000,
 	"isDebug": true,

@@ -3,32 +3,27 @@ var path = require('path')
 var objectAssign = require('object-assign');
 var file = require('./base/file')
 
-var defaultConfig = require('./config.json')
-
-var defaultAppConfig = {
-	path:{
-		src:"./src/"
-		, dist:"./dist/"
-		, less:"./less/"
-		, css:"./css/"
-		, components:"./components/"
-	}
-	, isDebug : true
-	, depends : {global:[]}
-	, version : 1
-}
+var defaultConfig = require('./config/server.json')
+var defaultAppConfig = require('./config/apps.json')
 
 module.exports = function(config){
 	config = objectAssign({}, defaultConfig, config || {})
 
 	for(var hostname in config.hosts){
-		setConfig(hostname)
-	}
-
-	function setConfig(hostname){
 		var hostPath = path.join(config.appPath, config.hosts[hostname])
 
-		if(!fs.existsSync(hostPath)) return;
+		if(fs.existsSync(hostPath)){
+			if(/^\//ig.test(hostname)){
+				hostname = '127.0.0.1:' + config.onPort + hostname
+			}
+
+
+			setConfig(hostname, hostPath)
+
+		}
+	}
+
+	function setConfig(hostname, hostPath){
 
 		var configPath = path.join(hostPath, 'config.json')
 		var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
@@ -57,7 +52,7 @@ module.exports = function(config){
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
-		config[hostname] = appConfig
+		config.apps[hostname] = appConfig
 	}
 
 	return config

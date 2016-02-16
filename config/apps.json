@@ -1,0 +1,15 @@
+{
+	"path" :{
+		"src" : "./src/",
+		"dist" : "./dist/",
+		"less" : "./less/",
+		"css" : "./css/",
+		"components" : "./components/"
+	},
+	"isDebug" : true,
+	"depends" : {
+		"global" :[]
+	},
+	"version" : 1
+}
+
