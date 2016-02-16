@@ -10,7 +10,6 @@ compile(){
 	mkdir -p $logf
 	echo 'compile static files'
 	cd $rf'../' && node compile.js >> $log &
-	tail -f $log
 }
 
 compile	

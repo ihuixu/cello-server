@@ -21,24 +21,23 @@ function getName(urlpath){
 module.exports = function(config){
 	config = getConfig(config) 
 
-	for(var hostname in config.hosts){
+	for(var hostname in config.apps){
 		compile(hostname)
 	}
 
 	function compile(hostname){
-		var hostPath = config.hosts[hostname]
+		var appConfig = config.apps[hostname]
+		var hostPath = appConfig.hostPath 
 
 		if(!fs.existsSync(hostPath)){
 			return;
 		}
 
-		var appPath = config[hostname]
-
-		var srcPath = path.join(hostPath, appPath.path.src)
-		var distPath = path.join(hostPath, appPath.path.dist)
+		var srcPath = path.join(hostPath, appConfig.path.src)
+		var distPath = path.join(hostPath, appConfig.path.dist)
 		
-		var lessPath = path.join(hostPath, appPath.path.less)
-		var cssPath = path.join(hostPath, appPath.path.css)
+		var lessPath = path.join(hostPath, appConfig.path.less)
+		var cssPath = path.join(hostPath, appConfig.path.css)
 
 
 		if(!fs.existsSync(distPath)){
@@ -85,7 +84,7 @@ module.exports = function(config){
 							file.mkFile(distFilePath, content)
 
 						}else{
-							commonJS(config[hostname], hostPath, modName)
+							commonJS(appConfig, modName)
 								.then(function(source){
 									var content = UglifyJS.minify(source, {fromString: true}).code
 									file.mkFile(distFilePath, content)
@@ -127,7 +126,7 @@ module.exports = function(config){
 							file.mkFile(distFilePath, content)
 
 						}else{
-							commonCSS(config[hostname], hostPath, modName)
+							commonCSS(appConfig, modName)
 								.then(function(source){
 									file.mkFile(distFilePath, source)
 								})
