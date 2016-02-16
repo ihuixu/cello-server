@@ -26,7 +26,7 @@ module.exports = function(config){
 	}
 
 	function setConfig(hostname){
-		var hostPath = path.join(config.hosts[hostname])
+		var hostPath = path.join(config.appPath, config.hosts[hostname])
 
 		if(!fs.existsSync(hostPath)) return;
 

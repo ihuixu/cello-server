@@ -24,11 +24,12 @@ module.exports = function(config){
 		var hostname = req.headers.host
 
 		if(!config.hosts[hostname]){
+			console.log('error', 'Not exist: config.hosts['+ hostname +']!')
 			send(400, 'Not exist: config.hosts['+ hostname +']!')
 			return; 
 		}
 
-		var hostPath = path.join(config.hosts[hostname])
+		var hostPath = path.join(config.appPath, config.hosts[hostname])
 
 		var fileArray = req.url.split('/')
 		var fileOption = fileArray.splice(0,2).join('').split('~')
