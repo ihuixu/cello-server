@@ -50,6 +50,7 @@ module.exports = function(config){
 		}
 
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
+		appConfig.hostPath = hostPath
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
