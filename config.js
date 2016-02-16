@@ -12,15 +12,16 @@ module.exports = function(config){
 	for(var hostname in config.hosts){
 		var hostPath = path.join(config.appPath, config.hosts[hostname])
 
-		if(fs.existsSync(hostPath)){
-			if(/^\//ig.test(hostname)){
-				hostname = '127.0.0.1:' + config.onPort + hostname
-			}
-
-
-			setConfig(hostname, hostPath)
-
+		if(!fs.existsSync(hostPath)){
+			file.mkDir(hostPath)
 		}
+
+		if(/^\//ig.test(hostname)){
+			hostname = '127.0.0.1:' + config.onPort + hostname
+		}
+
+		setConfig(hostname, hostPath)
+
 	}
 
 	function setConfig(hostname, hostPath){

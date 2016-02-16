@@ -19,7 +19,7 @@ stopService() {
 
 	}
 startService() {
-	logf=$rf'../log/server/'` date +%Y/%m/` 
+	logf='/tmp/log/cello-server/'` date +%Y/%m/` 
 	log=$logf`date +%d`'.log'
 	echo 'SERVICE START AT '` date +%Y/%m/%d-%T` >> $log
 	mkdir -p $logf
