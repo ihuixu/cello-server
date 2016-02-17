@@ -4,7 +4,7 @@
 ```
 server {
 	listen       80;
-	server_name  xhdev.cello.com xhviolin.cello.com xhxiaoyemian.cello.com;
+	server_name  xhdev.cello.com;
 	charset utf-8;
 
 	access_log  logs/cello.access.log  main;
