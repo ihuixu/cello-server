@@ -1,6 +1,6 @@
 {
   "name": "cello-server",
-  "version": "0.0.46",
+  "version": "0.0.48",
   "description": "cello-server 静态服务 commonjs less components",
   "scripts": {
     "start": "node app.js"

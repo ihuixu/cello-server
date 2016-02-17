@@ -1,7 +1,7 @@
 {
 	"path" :{
-		"src" : "./src/",
-		"dist" : "./dist/",
+		"src" : "./script-ss/",
+		"dist" : "./script-min/",
 		"less" : "./less/",
 		"css" : "./css/",
 		"components" : "./components/"

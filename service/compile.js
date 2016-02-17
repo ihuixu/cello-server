@@ -8,7 +8,7 @@ var vueJS = require('../base/vueJS')
 var getConfig = require('../config')
 var file = require('../base/file')
 
-var defaults = require('../base/defaults')
+var defaults = require('../defaults')
 var defaultJS = defaults.defaultJS
 var defaultCSS = defaults.defaultCSS
 
