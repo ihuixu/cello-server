@@ -5,6 +5,7 @@ var file = require('./base/file')
 
 var defaultConfig = require('./config/server.json')
 var defaultAppConfig = require('./config/apps.json')
+var mustMake = ['src', 'less', 'components']
 
 module.exports = function(config){
 	config = objectAssign({}, defaultConfig, config || {})
@@ -55,6 +56,14 @@ module.exports = function(config){
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
 		config.apps[hostname] = appConfig
+
+
+		mustMake.map(function(name){
+			var pathPath = path.join(hostPath, appConfig.path[name])
+			if(!fs.existsSync(pathPath)){
+				file.mkDir(pathPath)
+			}
+		})
 	}
 
 	return config
