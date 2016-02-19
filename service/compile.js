@@ -13,7 +13,7 @@ var defaultJS = defaults.defaultJS
 var defaultCSS = defaults.defaultCSS
 
 function getName(urlpath){
-	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))', 'g')
+	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css|less))', 'g')
 	var names = urlpath.replace(reg, '').split('?')
 	return names[0]
 }
@@ -57,6 +57,7 @@ module.exports = function(config){
 				console.log('error compile', modName, err)
 			}
 		}
+
 		for(var i in defaultCSS){
 			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
 		}
@@ -121,6 +122,7 @@ module.exports = function(config){
 					case '.less' :
 						var modName = getName(filePath)
 						var content = defaultCSS[modName]
+						distFilePath = path.join(cssPath, modName+'.css')
 
 						if(content){
 							file.mkFile(distFilePath, content)
