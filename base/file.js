@@ -18,14 +18,7 @@ exports.getSource = function(filePath){
 } 
 
 exports.getJSContent = function(modPath, modSource){
-	var jsfile = ''
-	if(modSource){
-		jsfile = 'define("' + modPath + '",function(require, exports){\n' + modSource + '\n});\n'
-
-	}else{
-		jsfile = 'console.log("' + modPath + ' is lost!");\n'
-
-	}
+	var jsfile = 'define("' + modPath + '",function(require, exports){\n' + (modSource||'') + '\n});\n'
 	return jsfile
 }
 
