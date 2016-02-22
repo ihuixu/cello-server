@@ -7,8 +7,9 @@ var defaultConfig = require('./config/server.json')
 var defaultAppConfig = require('./config/apps.json')
 var mustMake = ['src', 'less', 'components']
 
-module.exports = function(config){
-	config = objectAssign({}, defaultConfig, config || {})
+module.exports = function(config, opts){
+	opts = opts || {}
+	config = objectAssign({}, defaultConfig, config||{})
 
 	for(var hostname in config.hosts){
 		var hostPath = path.join(config.appPath, config.hosts[hostname])
@@ -27,8 +28,17 @@ module.exports = function(config){
 
 	function setConfig(hostname, hostPath){
 
+		try{
+			var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
+		}catch(e){
+			console.log(e)
+			var appConfig = {}
+		}
+		appConfig = objectAssign({}, appConfig, opts || {})
+		console.log(appConfig)
+
+
 		var configPath = path.join(hostPath, 'config.json')
-		var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
 
 		if(fs.existsSync(configPath)){
 			configs = JSON.parse(fs.readFileSync(configPath, 'utf8')||'{}')

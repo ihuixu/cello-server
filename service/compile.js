@@ -19,7 +19,7 @@ function getName(urlpath){
 }
 
 module.exports = function(config){
-	config = getConfig(config) 
+	config = getConfig(config, {isDebug:false}) 
 
 	for(var hostname in config.apps){
 		compile(hostname)
