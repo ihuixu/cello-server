@@ -1,10 +1,10 @@
 var fs = require('fs')
 var path = require('path')
 var objectAssign = require('object-assign');
-var file = require('./file')
+var file = require('../base/file')
 
-var defaultConfig = require('../config/server.json')
-var defaultAppConfig = require('../config/apps.json')
+var defaultConfig = require('./config/server.json')
+var defaultAppConfig = require('./config/apps.json')
 var mustMake = ['src', 'less', 'components']
 
 module.exports = function(config, opts){
@@ -44,19 +44,15 @@ module.exports = function(config, opts){
 				if(typeof configs[name] == 'object'){
 					appConfig[name] = objectAssign({}, appConfig[name], opts[name] || configs[name])
 
-				}else if(name == 'version'){
+				}else if(name != 'version'){
 
-					if(configs[name]){
-						appConfig[name] = configs[name]+1
-					}
-
-				}else{
 					if(typeof opts[name] !== undefined){
 						appConfig[name] = opts[name]
 
 					}else{ 
 						appConfig[name] = configs[name]
 					}
+
 				}
 			}
 
@@ -65,8 +61,6 @@ module.exports = function(config, opts){
 
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
 		appConfig.hostPath = hostPath
-
-		console.log(appConfig)
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
