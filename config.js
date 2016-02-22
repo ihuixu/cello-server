@@ -34,9 +34,6 @@ module.exports = function(config, opts){
 			console.log(e)
 			var appConfig = {}
 		}
-		appConfig = objectAssign({}, appConfig, opts || {})
-		console.log(appConfig)
-
 
 		var configPath = path.join(hostPath, 'config.json')
 
@@ -45,7 +42,7 @@ module.exports = function(config, opts){
 
 			for(var name in configs){
 				if(typeof configs[name] == 'object'){
-					appConfig[name] = objectAssign({}, appConfig[name], configs[name])
+					appConfig[name] = objectAssign({}, appConfig[name], opts[name] || configs[name])
 
 				}else if(name == 'version'){
 
@@ -54,14 +51,22 @@ module.exports = function(config, opts){
 					}
 
 				}else{
-					appConfig[name] = appConfig[name] || configs[name]
+					if(typeof opts[name] !== undefined){
+						appConfig[name] = opts[name]
 
+					}else{ 
+						appConfig[name] = configs[name]
+					}
 				}
 			}
+
 		}
+
 
 		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
 		appConfig.hostPath = hostPath
+
+		console.log(appConfig)
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
