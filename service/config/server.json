@@ -1,9 +1,0 @@
-{
-	"appPath": "../",
-	"hosts": {
-	},
-	"apps": {
-	},
-	"max_time": 3000,
-	"onPort": 6144
-}

@@ -3,11 +3,10 @@ var path = require('path')
 var objectAssign = require('object-assign');
 var file = require('../base/file')
 
-var defaultConfig = require('./config/server.json')
+var defaultConfig = require('../config/server.json')
 var mustMake = ['src', 'less', 'components']
 
 var setAppConfig = require('./apps')
-
 
 module.exports = function(config, opts){
 	opts = opts || {}

@@ -3,78 +3,44 @@ var path = require('path')
 var objectAssign = require('object-assign');
 var file = require('../base/file')
 
-var defaultConfig = require('./config/server.json')
 var defaultAppConfig = require('./config/apps.json')
-var mustMake = ['src', 'less', 'components']
 
-module.exports = function(config, opts){
-	opts = opts || {}
-	config = objectAssign({}, defaultConfig, config||{})
-
-	for(var hostname in config.hosts){
-		var hostPath = path.join(config.appPath, config.hosts[hostname])
-
-		if(!fs.existsSync(hostPath)){
-			file.mkDir(hostPath)
-		}
-
-		if(/^\//ig.test(hostname)){
-			hostname = '127.0.0.1:' + config.onPort + hostname
-		}
-
-		setConfig(hostname, hostPath)
-
+module.exports = function(hostname, hostPath, opts){
+	try{
+		var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
+	}catch(e){
+		console.log(e)
+		var appConfig = {}
 	}
 
-	function setConfig(hostname, hostPath){
+	var configPath = path.join(hostPath, 'config.json')
 
-		try{
-			var appConfig = JSON.parse(JSON.stringify(defaultAppConfig))
-		}catch(e){
-			console.log(e)
-			var appConfig = {}
-		}
+	if(fs.existsSync(configPath)){
+		var config = JSON.parse(fs.readFileSync(configPath, 'utf8')||'{}')
 
-		var configPath = path.join(hostPath, 'config.json')
+		for(var name in config){
+			if(typeof config[name] == 'object'){
+				appConfig[name] = objectAssign({}, appConfig[name], opts[name] || config[name])
 
-		if(fs.existsSync(configPath)){
-			configs = JSON.parse(fs.readFileSync(configPath, 'utf8')||'{}')
+			}else if(name != 'version'){
 
-			for(var name in configs){
-				if(typeof configs[name] == 'object'){
-					appConfig[name] = objectAssign({}, appConfig[name], opts[name] || configs[name])
+				if(typeof opts[name] !== undefined){
+					appConfig[name] = opts[name]
 
-				}else if(name != 'version'){
-
-					if(typeof opts[name] !== undefined){
-						appConfig[name] = opts[name]
-
-					}else{ 
-						appConfig[name] = configs[name]
-					}
-
+				}else{ 
+					appConfig[name] = config[name]
 				}
-			}
 
+			}
 		}
 
-
-		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
-		appConfig.hostPath = hostPath
-
-		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
-
-		config.apps[hostname] = appConfig
-
-
-		mustMake.map(function(name){
-			var pathPath = path.join(hostPath, appConfig.path[name])
-			if(!fs.existsSync(pathPath)){
-				file.mkDir(pathPath)
-			}
-		})
 	}
 
-	return config
+	appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
+	appConfig.hostPath = hostPath
+
+	file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
+
+	return appConfig
 }
 
