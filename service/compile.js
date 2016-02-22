@@ -5,10 +5,10 @@ var UglifyJS = require("uglify-js");
 var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
-var getConfig = require('../config')
+var getConfig = require('../base/config')
 var file = require('../base/file')
 
-var defaults = require('../defaults')
+var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
 var defaultCSS = defaults.defaultCSS
 

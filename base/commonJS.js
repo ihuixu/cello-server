@@ -4,7 +4,7 @@ var vueJS = require('./vueJS')
 var Promise = require('bluebird')
 var file = require('./file')
 
-var defaults = require('../defaults')
+var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
 
 module.exports = function(config, mainPath){
