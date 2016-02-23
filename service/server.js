@@ -4,9 +4,11 @@ var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
 var getConfig = require('./config')
+var file = require('../base/file')
 
 var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
+var singleJS = defaults.singleJS
 var defaultCSS = defaults.defaultCSS
 
 function getName(urlpath){
@@ -49,8 +51,11 @@ module.exports = function(config){
 
 		switch(fileType){
 			case 'src' : 
-				if(defaultJS[modName]){
-					send(200, defaultJS[modName], 'js')
+				if(singleJS[modName]){
+					send(200, singleJS[modName], 'js')
+
+				}else if(defaultJS[modName]){
+					send(200, file.getJSContent(defaultJS[modName]), 'js')
 
 				}else{
 					commonJS(appConfig, modName)

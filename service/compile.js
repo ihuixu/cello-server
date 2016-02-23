@@ -10,6 +10,7 @@ var file = require('../base/file')
 
 var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
+var singleJS = defaults.singleJS
 var defaultCSS = defaults.defaultCSS
 
 function getName(urlpath){
@@ -48,9 +49,20 @@ module.exports = function(config){
 			file.mkDir(cssPath)
 		}
 
+
+		for(var modName in singleJS){
+			try{
+				var content = UglifyJS.minify(singleJS[modName], {fromString: true}).code
+				file.mkFile(path.join(distPath, modName+'.js'), content)
+
+			}catch(err){
+				console.log('error compile', modName, err)
+			}
+		}
+
 		for(var modName in defaultJS){
 			try{
-				var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
+				var content = UglifyJS.minify(file.getJSContent(defaultJS[modName]), {fromString: true}).code
 				file.mkFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){

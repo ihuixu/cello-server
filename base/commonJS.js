@@ -6,6 +6,7 @@ var file = require('./file')
 
 var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
+var singleJS = defaults.singleJS
 
 module.exports = function(config, mainPath){
 	var excludes = config.depends.global || []
@@ -69,9 +70,16 @@ module.exports = function(config, mainPath){
 							break;
 
 						default:
-							var source = defaultJS[modName]
-												? defaultJS[modName]
-												: file.getSource(path.join(srcPath, modName))
+							var source = ''
+							if(singleJS[modName]){
+								source = singleJS[modName]
+
+							}else if(defaultJS[modName]){
+								source = file.getJSContent(defaultJS[modName])
+
+							}else{
+								source = file.getSource(path.join(srcPath, modName))
+							}
 
 							code.push(file.getJSContent(modName, source))
 							getDepends(modName, source)
