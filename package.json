@@ -1,7 +1,7 @@
 {
   "name": "cello-server",
   "description": "cello-server 静态服务 commonjs less components",
-  "version": "0.0.64",
+  "version": "0.0.65",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xh1021/cello-server.git"
@@ -16,6 +16,9 @@
     "ejs": "^2.3.4",
     "less": "^2.5.3",
     "object-assign": "^4.0.1",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "vue": "^1.0.16",
+    "vue-touch": "^1.0.2",
+    "hammerjs": "^2.0.6"
   }
 }

@@ -4,8 +4,8 @@ var path = require('path')
 exports.singleJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
 	, 'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
-	, 'vue' : fs.readFileSync(path.join(__dirname, '../lib/src/vue.js'), 'utf8')
-	, 'vue-touch' : fs.readFileSync(path.join(__dirname, '../lib/src/vue-touch.js'), 'utf8')
+	, 'vue' : fs.readFileSync(path.join(__dirname, '../node_modules/vue/dist/vue.min.js'), 'utf8')
+	, 'vue-touch' : fs.readFileSync(path.join(__dirname, '../node_modules/vue-touch/vue-touch.js'), 'utf8')
 }
 
 exports.defaultJS = {
