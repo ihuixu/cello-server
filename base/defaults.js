@@ -12,6 +12,7 @@ exports.singleJS = {
 	, 'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
 	, 'vue' : fs.readFileSync(path.join(modulesPath, 'vue/dist/vue.min.js'), 'utf8')
 	, 'vue-touch' : fs.readFileSync(path.join(modulesPath, 'vue-touch/vue-touch.js'), 'utf8')
+	, 'vue-resource' : fs.readFileSync(path.join(modulesPath, 'vue-resource/dist/vue-resource.min.js'), 'utf8')
 	, 'hammer' : fs.readFileSync(path.join(modulesPath, 'hammerjs/hammer.min.js'), 'utf8')
 }
 
