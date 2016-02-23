@@ -1,12 +1,18 @@
 var fs = require('fs')
 var path = require('path')
 
+var modulesPath = path.join(__dirname, '../node_modules/')
+if(!fs.existsSync(modulesPath)){
+	modulesPath = path.join(__dirname, '../../')
+}
+
+
 exports.singleJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
 	, 'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
-	, 'vue' : fs.readFileSync(path.join(__dirname, '../node_modules/vue/dist/vue.min.js'), 'utf8')
-	, 'vue-touch' : fs.readFileSync(path.join(__dirname, '../node_modules/vue-touch/vue-touch.js'), 'utf8')
-	, 'hammer' : fs.readFileSync(path.join(__dirname, '../node_modules/hammerjs/hammer.min.js'), 'utf8')
+	, 'vue' : fs.readFileSync(path.join(modulesPath, 'vue/dist/vue.min.js'), 'utf8')
+	, 'vue-touch' : fs.readFileSync(path.join(modulesPath, 'vue-touch/vue-touch.js'), 'utf8')
+	, 'hammer' : fs.readFileSync(path.join(modulesPath, 'hammerjs/hammer.min.js'), 'utf8')
 }
 
 exports.defaultJS = {
