@@ -6,7 +6,7 @@ var file = require('../base/file')
 var defaultConfig = require('../config/server.json')
 var mustMake = ['src', 'less', 'components']
 
-var setAppConfig = require('./apps')
+var setAppsConfig = require('./apps')
 
 module.exports = function(config, opts){
 	opts = opts || {}
@@ -14,6 +14,7 @@ module.exports = function(config, opts){
 
 	for(var hostname in config.hosts){
 		var hostPath = path.join(config.appPath, config.hosts[hostname])
+		var configPath = path.join(hostPath, 'config.json')
 
 		if(!fs.existsSync(hostPath)){
 			file.mkDir(hostPath)
@@ -23,7 +24,14 @@ module.exports = function(config, opts){
 			hostname = '127.0.0.1:' + config.onPort + hostname
 		}
 
-		var appConfig = setAppConfig(hostname, hostPath, opts)
+		var appConfig = setAppsConfig(hostname, hostPath)
+
+		appConfig.isDebug = !!opts.isDebug
+
+		if(opts.update)
+			appConfig.version++
+
+		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
 		mustMake.map(function(name){
 			var pathPath = path.join(hostPath, appConfig.path[name])

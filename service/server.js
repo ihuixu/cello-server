@@ -17,7 +17,8 @@ function getName(urlpath){
 
 module.exports = function(config){
 	var outputed = {}
-	config = getConfig(config, {isDebug:true}) 
+	//config = getConfig(config, {isDebug:true}) 
+	config = getConfig(config, {isDebug:true, update:true}) 
 
 	function onRequest(req, res){
 		var hosturl = req.headers.host + req.url 
