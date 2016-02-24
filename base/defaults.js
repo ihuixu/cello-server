@@ -15,6 +15,9 @@ exports.singleJS = {
 	, 'vue-resource' : fs.readFileSync(path.join(modulesPath, 'vue-resource/dist/vue-resource.min.js'), 'utf8')
 	, 'hammer' : fs.readFileSync(path.join(modulesPath, 'hammerjs/hammer.min.js'), 'utf8')
 	, 'zepto' : fs.readFileSync(path.join(modulesPath, 'zepto/zepto.min.js'), 'utf8')
+
+	, 'scrollStop' : fs.readFileSync(path.join(__dirname, '../lib/scrollStop.js'), 'utf8')
+	, 'throttle' : fs.readFileSync(path.join(__dirname, '../lib/throttle.js'), 'utf8')
 }
 
 exports.defaultJS = {
