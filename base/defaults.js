@@ -11,6 +11,10 @@ exports.singleJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
 	, 'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
 	, 'querystring' : fs.readFileSync(path.join(__dirname, '../lib/querystring.js'), 'utf8')
+
+	, 'scrollStop' : fs.readFileSync(path.join(__dirname, '../lib/scrollStop.js'), 'utf8')
+	, 'throttle' : fs.readFileSync(path.join(__dirname, '../lib/throttle.js'), 'utf8')
+
 	, 'vue' : fs.readFileSync(path.join(modulesPath, 'vue/dist/vue.min.js'), 'utf8')
 	, 'vue-touch' : fs.readFileSync(path.join(modulesPath, 'vue-touch/vue-touch.js'), 'utf8')
 	, 'vue-resource' : fs.readFileSync(path.join(modulesPath, 'vue-resource/dist/vue-resource.min.js'), 'utf8')
