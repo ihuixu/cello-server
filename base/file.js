@@ -22,14 +22,14 @@ exports.getJSContent = function(modPath, modSource){
 	return jsfile
 }
 
-function mkFile(fileName, content){
-  fs.createWriteStream(fileName, {
+function mkFile(filePath, content){
+  fs.createWriteStream(filePath, {
     flags: "w",
     encoding: "utf-8",
     mode: 0666
   }).write(content + "\n");
 
-	console.log('updateFile', fileName)
+	console.log('updateFile', filePath)
 }
 
 function mkDir(dirName){
@@ -37,8 +37,11 @@ function mkDir(dirName){
 	console.log('mkdir', dirName)
 }
 
-function readFile(fileName){
-  var file = fs.readFileSync(fileName, 'utf-8')
+function readFile(filePath){
+  var file = ''
+	if(fs.existsSync(filePath)){
+		file = fs.readFileSync(filePath, 'utf-8')
+	}
   return file
 }
 

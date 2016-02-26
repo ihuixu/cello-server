@@ -6,9 +6,6 @@
 		"css" : "./css/",
 		"components" : "./components/"
 	},
-	"depends" : {
-		"global" : []
-	},
 	"isDebug" : false
 }
 

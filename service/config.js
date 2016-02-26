@@ -6,7 +6,7 @@ var file = require('../base/file')
 var defaultConfig = require('../config/server.json')
 var mustMake = ['src', 'less', 'components']
 
-var setAppsConfig = require('./apps')
+var setConfig = require('./setConfig')
 
 module.exports = function(config, opts){
 	opts = opts || {}
@@ -24,12 +24,16 @@ module.exports = function(config, opts){
 			hostname = '127.0.0.1:' + config.onPort + hostname
 		}
 
-		var appConfig = setAppsConfig(hostname, hostPath)
-
+		var appConfig = setConfig.apps(hostname, hostPath)
 		appConfig.isDebug = !!opts.isDebug
 
-		if(opts.update)
-			appConfig.version++
+		if(typeof appConfig.version == "undefined" || opts.update){
+			appConfig.version = Date.parse(new Date)/1000 
+		}
+
+
+		var dependsConfig = setConfig.depends(hostname, hostPath) 
+		appConfig.depends = dependsConfig
 
 		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
 
