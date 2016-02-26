@@ -32,10 +32,15 @@ updateVersion() {
 	cd $rf'../' && node version.js
 
 }
+isDebug() {
+	echo 'isDebug'
+	cd $rf'../' && node debug.js
+}
+
 
 
 if [ $# -eq 0 ];then
-	echo "you should pass args start|restart|stop|version"	
+	echo "you should pass args start|restart|stop|version|debug"	
 else
 	case $1 in
 		"stop") 
@@ -46,6 +51,11 @@ else
 			;;
 		"restart") 
 			stopService
+			startService
+			;;
+		"debug")
+			stopService
+			isDebug
 			startService
 			;;
 		"version") 
