@@ -27,9 +27,15 @@ startService() {
 	cd $rf'../' && nohup node server.js >> $log &
 
 }
+updateVersion() {
+	echo 'UPDATE VERSION'
+	cd $rf'../' && node version.js
+
+}
+
 
 if [ $# -eq 0 ];then
-	echo "you should pass args start|restart|stop"	
+	echo "you should pass args start|restart|stop|version"	
 else
 	case $1 in
 		"stop") 
@@ -40,6 +46,11 @@ else
 			;;
 		"restart") 
 			stopService
+			startService
+			;;
+		"version") 
+			stopService
+			updateVersion
 			startService
 			;;
 	esac
