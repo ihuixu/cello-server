@@ -1,4 +1,11 @@
-#!/bin/bash 
+#!/bin/bash
+if [ $USER != "work" ]
+then
+	echo "work only"
+##  exit 1
+fi
+source ~/.bash_profile
+
 rf=$(pwd)'/'
 
 script_path=`dirname $(pwd)`
@@ -24,23 +31,14 @@ startService() {
 	echo 'SERVICE START AT '` date +%Y/%m/%d-%T` >> $log
 	mkdir -p $logf
 	echo 'static service start , logfile:'$log	
+	cd $rf'../' && node debug.js
 	cd $rf'../' && nohup node server.js >> $log &
 
 }
-updateVersion() {
-	echo 'UPDATE VERSION'
-	cd $rf'../' && node version.js
-
-}
-isDebug() {
-	echo 'isDebug'
-	cd $rf'../' && node debug.js
-}
-
 
 
 if [ $# -eq 0 ];then
-	echo "you should pass args start|restart|stop|version|debug"	
+	echo "you should pass args start|restart|stop"	
 else
 	case $1 in
 		"stop") 
@@ -51,16 +49,6 @@ else
 			;;
 		"restart") 
 			stopService
-			startService
-			;;
-		"debug")
-			stopService
-			isDebug
-			startService
-			;;
-		"version") 
-			stopService
-			updateVersion
 			startService
 			;;
 	esac
