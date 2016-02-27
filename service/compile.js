@@ -82,7 +82,7 @@ module.exports = function(config){
 				file.mkDir(srcPath)
 			}
 
-			var files = fs.readdirSync(path.join(srcPath, basePath))
+			var files = file.readDir(path.join(srcPath, basePath))
 
 			files.map(function(filename){
 				var filePath = path.join(basePath, filename)
@@ -124,7 +124,7 @@ module.exports = function(config){
 				file.mkDir(lessPath)
 			}
 
-			var files = fs.readdirSync(path.join(lessPath, basePath))
+			var files = file.readDir(path.join(lessPath, basePath))
 
 			files.map(function(filename){
 				var filePath = path.join(basePath, filename)

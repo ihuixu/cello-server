@@ -71,7 +71,7 @@ module.exports = function(config){
 					})
 				break;
 
-			case 'css' : 
+			case 'less' : 
 				if(defaultCSS[modName]){
 					send(200, defaultCSS[modName], 'css')
 

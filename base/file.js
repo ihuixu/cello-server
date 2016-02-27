@@ -8,13 +8,7 @@ exports.getSource = function(filePath){
 	if(!path.extname(filePath))
 		filePath += '.js'
 
-	if(fs.existsSync(filePath)){
-		return fs.readFileSync(filePath, 'utf8') 
-
-	}else{
-		return ''
-	}
-
+	return readFile(filePath)
 } 
 
 exports.getJSContent = function(modPath, modSource){
@@ -38,19 +32,28 @@ function mkDir(dirName){
 }
 
 function readFile(filePath){
-  var file = ''
-	if(fs.existsSync(filePath)){
-		file = fs.readFileSync(filePath, 'utf-8')
+	try{
+		return fs.readFileSync(filePath, 'utf-8')
+
+	}catch(e){
+		console.log(e)
+		return ''
 	}
-  return file
+
 }
 
-function readDir(dirName){
-  var files = fs.readdirSync(dirName)
-  return files
+function readDir(filePath){
+	try{
+		return fs.readdirSync(filePath)
+
+	}catch(e){
+		console.log(e)
+		return []
+	}
 }
 
 exports.mkFile = mkFile
 exports.mkDir = mkDir
 exports.readFile = readFile
 exports.readDir = readDir
+
