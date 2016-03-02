@@ -20,6 +20,7 @@ exports.singleJS = {
 	, 'vue-resource' : fs.readFileSync(path.join(modulesPath, 'vue-resource/dist/vue-resource.min.js'), 'utf8')
 	, 'hammer' : fs.readFileSync(path.join(modulesPath, 'hammerjs/hammer.min.js'), 'utf8')
 	, 'zepto' : fs.readFileSync(path.join(modulesPath, 'zepto/zepto.min.js'), 'utf8')
+	, 'jquery' : fs.readFileSync(path.join(modulesPath, 'jquery/dist/jquery.min.js'), 'utf8')
 }
 
 exports.defaultJS = {
