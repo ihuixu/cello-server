@@ -19,7 +19,7 @@ function getName(urlpath){
 	return names[0]
 }
 
-module.exports = function(config){
+module.exports = function(config, callback){
 	config = getConfig(config) 
 
 	var wait = 0
@@ -42,7 +42,7 @@ module.exports = function(config){
 				t = setTimeout(function(){
 
 					if(wait == done)
-						console.log('COMPILE DONE.')
+						callback && callback()
 
 				}, 3000)
 
