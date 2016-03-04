@@ -42,7 +42,13 @@ function getConfig(hostname, hostPath, type){
 	var configPath = path.join(hostPath, setting.path) 
 
 	if(fs.existsSync(configPath)){
-		var config = JSON.parse(fs.readFileSync(configPath, 'utf8')||'{}')
+		var config = {}
+		try{
+			config = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
+
+		}catch(err){
+			console.log('error setConfig', err)
+		}
 
 		for(var name in config){
 			if(util.isObject(config[name]) && !util.isArray(config[name])){

@@ -1,7 +1,7 @@
 {
   "name": "cello-server",
   "description": "cello-server 静态服务 commonjs less components",
-  "version": "0.1.0",
+  "version": "0.0.104",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xh1021/cello-server.git"

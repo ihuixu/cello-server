@@ -1,5 +1,6 @@
 var path = require('path')
 var fs = require('fs')
+var zlib = require('zlib')
 
 exports.getSource = function(filePath){
 	var filePaths = filePath.split('?')
@@ -14,6 +15,18 @@ exports.getSource = function(filePath){
 exports.getJSContent = function(modPath, modSource){
 	var jsfile = 'define("' + modPath + '",function(require, exports){\n' + (modSource||'') + '\n});\n'
 	return jsfile
+}
+
+function mkGzipFile(filePath, content){
+/*
+	try{
+		content = zlib.gzipSync(content)
+	}catch(err){
+		console.log('error mkGzipFile', err)
+	}
+*/
+
+	mkFile(filePath, content)
 }
 
 function mkFile(filePath, content){
@@ -52,6 +65,7 @@ function readDir(filePath){
 	}
 }
 
+exports.mkGzipFile = mkGzipFile
 exports.mkFile = mkFile
 exports.mkDir = mkDir
 exports.readFile = readFile

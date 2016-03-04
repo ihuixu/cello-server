@@ -53,7 +53,7 @@ module.exports = function(config){
 		for(var modName in singleJS){
 			try{
 				var content = UglifyJS.minify(singleJS[modName], {fromString: true}).code
-				file.mkFile(path.join(distPath, modName+'.js'), content)
+				file.mkGzipFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){
 				console.log('error compile', modName, err)
@@ -63,7 +63,7 @@ module.exports = function(config){
 		for(var modName in defaultJS){
 			try{
 				var content = UglifyJS.minify(file.getJSContent(defaultJS[modName]), {fromString: true}).code
-				file.mkFile(path.join(distPath, modName+'.js'), content)
+				file.mkGzipFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){
 				console.log('error compile', modName, err)
@@ -71,7 +71,7 @@ module.exports = function(config){
 		}
 
 		for(var i in defaultCSS){
-			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
+			file.mkGzipFile(path.join(cssPath, i+'.css'), defaultCSS[i])
 		}
 
 		compileJS('./')
@@ -94,28 +94,29 @@ module.exports = function(config){
 
 						if(defaultJS[modName]){
 							var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
-							file.mkFile(distFilePath, content)
+							file.mkGzipFile(distFilePath, content)
 
 						}else{
 							commonJS(appConfig, modName)
 								.then(function(source){
 									var content = UglifyJS.minify(source, {fromString: true}).code
-									file.mkFile(distFilePath, content)
+									file.mkGzipFile(distFilePath, content)
 								})
 						}
 
 						break;
 	
+					case '.json' :
+						break;
 
-					case '' :
+
+					default :
 						if(!fs.existsSync(distFilePath)){
 							file.mkDir(distFilePath)
 						}
 						compileJS(filePath)
 						break;
 
-					default :
-						break;
 
 				}
 
@@ -141,27 +142,27 @@ module.exports = function(config){
 						distFilePath = path.join(cssPath, modName+'.css')
 
 						if(content){
-							file.mkFile(distFilePath, content)
+							file.mkGzipFile(distFilePath, content)
 
 						}else{
 							commonCSS(appConfig, modName)
 								.then(function(source){
-									file.mkFile(distFilePath, source)
+									file.mkGzipFile(distFilePath, source)
 								})
 						}
 
 						break;
 	
+					case '.json' :
+						break;
 
-					case '' :
+					default :
 						if(!fs.existsSync(distFilePath)){
 							file.mkDir(distFilePath)
 						}
 						compileCSS(filePath)
 						break;
 
-					default :
-						break;
 				}
 
 			})
