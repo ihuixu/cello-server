@@ -22,8 +22,31 @@ function getName(urlpath){
 module.exports = function(config){
 	config = getConfig(config) 
 
+	var wait = 0
+	var done = 0
+	var t
+
 	for(var hostname in config.apps){
 		compile(hostname)
+	}
+
+	function mkFile(filePath, content){
+		wait++
+
+		file.mkFile(filePath, content)
+			.then(function(){
+
+				done++
+
+				clearTimeout(t)
+				t = setTimeout(function(){
+
+					if(wait == done)
+						console.log('COMPILE DONE.')
+
+				}, 3000)
+
+			})
 	}
 
 	function compile(hostname){
@@ -53,7 +76,7 @@ module.exports = function(config){
 		for(var modName in singleJS){
 			try{
 				var content = UglifyJS.minify(singleJS[modName], {fromString: true}).code
-				file.mkGzipFile(path.join(distPath, modName+'.js'), content)
+				mkFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){
 				console.log('error compile', modName, err)
@@ -63,7 +86,7 @@ module.exports = function(config){
 		for(var modName in defaultJS){
 			try{
 				var content = UglifyJS.minify(file.getJSContent(defaultJS[modName]), {fromString: true}).code
-				file.mkGzipFile(path.join(distPath, modName+'.js'), content)
+				mkFile(path.join(distPath, modName+'.js'), content)
 
 			}catch(err){
 				console.log('error compile', modName, err)
@@ -71,7 +94,7 @@ module.exports = function(config){
 		}
 
 		for(var i in defaultCSS){
-			file.mkGzipFile(path.join(cssPath, i+'.css'), defaultCSS[i])
+			mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
 		}
 
 		compileJS('./')
@@ -94,13 +117,13 @@ module.exports = function(config){
 
 						if(defaultJS[modName]){
 							var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
-							file.mkGzipFile(distFilePath, content)
+							mkFile(distFilePath, content)
 
 						}else{
 							commonJS(appConfig, modName)
 								.then(function(source){
 									var content = UglifyJS.minify(source, {fromString: true}).code
-									file.mkGzipFile(distFilePath, content)
+									mkFile(distFilePath, content)
 								})
 						}
 
@@ -142,12 +165,12 @@ module.exports = function(config){
 						distFilePath = path.join(cssPath, modName+'.css')
 
 						if(content){
-							file.mkGzipFile(distFilePath, content)
+							mkFile(distFilePath, content)
 
 						}else{
 							commonCSS(appConfig, modName)
 								.then(function(source){
-									file.mkGzipFile(distFilePath, source)
+									mkFile(distFilePath, source)
 								})
 						}
 

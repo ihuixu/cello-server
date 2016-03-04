@@ -47,7 +47,6 @@ module.exports = function(config, opts){
 		config.apps[hostname] = appConfig
 	}
 
-
 	return config
 }
 

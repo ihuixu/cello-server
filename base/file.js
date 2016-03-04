@@ -1,6 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 var zlib = require('zlib')
+var Promise = require('bluebird')
 
 exports.getSource = function(filePath){
 	var filePaths = filePath.split('?')
@@ -25,18 +26,18 @@ function mkGzipFile(filePath, content){
 		console.log('error mkGzipFile', err)
 	}
 */
-
 	mkFile(filePath, content)
 }
 
 function mkFile(filePath, content){
-  fs.createWriteStream(filePath, {
-    flags: "w",
-    encoding: "utf-8",
-    mode: 0666
-  }).write(content + "\n");
+	return new Promise(function(resolve, reject) {
+		fs.writeFile(filePath, content, "utf-8", function(){
+			
+			console.log('updateFile', filePath)
+			resolve();
 
-	console.log('updateFile', filePath)
+		})
+	})
 }
 
 function mkDir(dirName){
