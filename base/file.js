@@ -18,11 +18,13 @@ exports.getJSContent = function(modPath, modSource){
 }
 
 function mkGzipFile(filePath, content){
+/*
 	try{
 		content = zlib.gzipSync(content)
 	}catch(err){
 		console.log('error mkGzipFile', err)
 	}
+*/
 
 	mkFile(filePath, content)
 }
