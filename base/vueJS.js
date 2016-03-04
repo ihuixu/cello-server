@@ -40,7 +40,7 @@ module.exports = function(config, mainPath){
 
 					done()
 				}, function(error){
-					console.log(error)
+					console.log('Vuejs', error)
 					len--
 					source[tagname] = [] 
 

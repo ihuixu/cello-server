@@ -28,7 +28,8 @@ module.exports = function(block, name, lessPath){
 
 		}, function(error, output){
 			if(error){
-				reject(error);
+				//reject(error);
+				resolve(error);
 
 			}else{
 

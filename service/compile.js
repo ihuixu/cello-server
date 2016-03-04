@@ -107,12 +107,16 @@ module.exports = function(config){
 						break;
 	
 
-					default :
+					case '' :
 						if(!fs.existsSync(distFilePath)){
 							file.mkDir(distFilePath)
 						}
 						compileJS(filePath)
 						break;
+
+					default :
+						break;
+
 				}
 
 			})
@@ -149,11 +153,14 @@ module.exports = function(config){
 						break;
 	
 
-					default :
+					case '' :
 						if(!fs.existsSync(distFilePath)){
 							file.mkDir(distFilePath)
 						}
 						compileCSS(filePath)
+						break;
+
+					default :
 						break;
 				}
 

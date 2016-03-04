@@ -16,7 +16,8 @@ module.exports = function(config, mainPath){
 
 		}, function(error, output){
 			if(error){
-				reject(error);
+//				reject(error);
+				resolve(error);
 
 			}else{
 
