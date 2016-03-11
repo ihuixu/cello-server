@@ -51,7 +51,7 @@ function getConfig(hostname, hostPath, type){
 		}
 
 		for(var name in config){
-			if(util.isObject(config[name]) && !util.isArray(config[name])){
+			if(typeof config[name] == "object" && !util.isArray(config[name])){
 				newConfig[name] = objectAssign({}, newConfig[name], config[name])
 
 			}else{
