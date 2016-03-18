@@ -26,6 +26,7 @@ exports.apps = function(hostname, hostPath){
 exports.depends = function(hostname, hostPath){
 	var config = getConfig(hostname, hostPath, 'depends')
 	config.global = config.global.join('+')
+console.log(config.global)
 
 	return config
 } 
@@ -43,7 +44,7 @@ function getConfig(hostname, hostPath, type){
 		console.log(e)
 	}
 
-	if(!fs.existsSync(configPath)){
+	if(fs.existsSync(configPath)){
 		try{
 			config = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
 		}catch(err){
