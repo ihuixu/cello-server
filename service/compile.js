@@ -13,6 +13,8 @@ var defaultJS = defaults.defaultJS
 var singleJS = defaults.singleJS
 var defaultCSS = defaults.defaultCSS
 
+var getJSSource = require('./getJSSource')
+
 function getName(urlpath){
 	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css|less))', 'g')
 	var names = urlpath.replace(reg, '').split('?')
@@ -73,6 +75,11 @@ module.exports = function(config, callback){
 		}
 
 
+		getJSSource(appConfig, appConfig.depends.global, function(source){
+			var content = UglifyJS.minify(source, {fromString: true}).code
+			mkFile(path.join(distPath, appConfig.depends.global+'.js'), content)
+		})
+
 		for(var modName in singleJS){
 			try{
 				var content = UglifyJS.minify(singleJS[modName], {fromString: true}).code
@@ -114,18 +121,10 @@ module.exports = function(config, callback){
 				switch(path.extname(filename)){
 					case '.js' :
 						var modName = getName(filePath)
-
-						if(defaultJS[modName]){
-							var content = UglifyJS.minify(defaultJS[modName], {fromString: true}).code
+						getJSSource(appConfig, modName, function(source){
+							var content = UglifyJS.minify(source, {fromString: true}).code
 							mkFile(distFilePath, content)
-
-						}else{
-							commonJS(appConfig, modName)
-								.then(function(source){
-									var content = UglifyJS.minify(source, {fromString: true}).code
-									mkFile(distFilePath, content)
-								})
-						}
+						})
 
 						break;
 	
@@ -139,7 +138,6 @@ module.exports = function(config, callback){
 						}
 						compileJS(filePath)
 						break;
-
 
 				}
 

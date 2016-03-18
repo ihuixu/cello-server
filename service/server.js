@@ -1,6 +1,6 @@
 var http = require('http')
 var path = require('path')
-var commonJS = require('../base/commonJS')
+//var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
 var getConfig = require('./config')
@@ -10,6 +10,8 @@ var defaults = require('../base/defaults')
 var defaultJS = defaults.defaultJS
 var singleJS = defaults.singleJS
 var defaultCSS = defaults.defaultCSS
+
+var getJSSource = require('./getJSSource')
 
 function getName(urlpath){
 	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css))', 'g')
@@ -47,43 +49,13 @@ module.exports = function(config){
 		var filePath = fileArray.join('/')
 
 		var modName = getName(filePath)
-		var modNames = modName.split('+')
-		console.log(modName, modNames)
 
 		switch(fileType){
 			case 'src' : 
+				getJSSource(appConfig, modName, function(source){
+					send(200, source, 'js')					
+				})
 
-				var sources = []
-				var len = modNames.length
-
-				function done(){
-					len--
-					if(len) return;
-
-					send(200, sources.join('\n'), 'js')					
-				}
-
-				for(var i in modNames){
-					var name = modNames[i]
-
-					if(singleJS[name]){
-						sources.push(singleJS[name])
-						done()
-
-					}else if(defaultJS[name]){
-						sources.push(file.getJSContent(defaultJS[name]))
-						done()
-
-					}else{
-						commonJS(appConfig, name)
-							.then(function(source){
-								sources.push(source)
-								done()
-							})
-					}
-
-				}
-				
 				break;
 
 			case 'components' : 
