@@ -25,41 +25,45 @@ exports.apps = function(hostname, hostPath){
 
 exports.depends = function(hostname, hostPath){
 	var config = getConfig(hostname, hostPath, 'depends')
+	config.global = config.global.join('+')
+
 	return config
 } 
 
 
 function getConfig(hostname, hostPath, type){
 	var setting = settings[type]
+	var configPath = path.join(hostPath, setting.path) 
+	var newConfig = {}
+	var config = {}
 
 	try{
-		var newConfig = JSON.parse(JSON.stringify(setting.config))
+		newConfig = JSON.parse(JSON.stringify(setting.config))
 	}catch(e){
 		console.log(e)
-		var newConfig = {}
 	}
 
-	var configPath = path.join(hostPath, setting.path) 
-
-	if(fs.existsSync(configPath)){
-		var config = {}
+	if(!fs.existsSync(configPath)){
 		try{
 			config = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
-
 		}catch(err){
 			console.log('error setConfig', err)
 		}
 
-		for(var name in config){
-			if(typeof config[name] == "object" && !util.isArray(config[name])){
-				newConfig[name] = objectAssign({}, newConfig[name], config[name])
-
-			}else{
-				newConfig[name] = config[name]
-			}
-		}
+		setConfig(newConfig, config)
 	}
 
 	return newConfig
+}
+
+function setConfig(newConfig, config){
+	for(var name in config){
+		if(typeof config[name] == "object" && !util.isArray(config[name])){
+			newConfig[name] = objectAssign({}, newConfig[name], config[name])
+
+		}else{
+			newConfig[name] = config[name]
+		}
+	}
 }
 

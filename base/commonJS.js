@@ -9,7 +9,7 @@ var defaultJS = defaults.defaultJS
 var singleJS = defaults.singleJS
 
 module.exports = function(config, mainPath){
-	var excludes = config.depends.global || []
+	var excludes = (config.depends.global || '').split('+')
 	var srcPath = path.join(config.hostPath, config.path.src)
 	var mainSource = file.getSource(path.join(srcPath, mainPath))
 
