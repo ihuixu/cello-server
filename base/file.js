@@ -14,6 +14,9 @@ exports.getSource = function(filePath){
 } 
 
 exports.getJSContent = function(modPath, modSource){
+	if(path.extname(modPath) == '.map')
+		return modSource||''
+
 	var jsfile = 'define("' + modPath + '",function(require, exports){\n' + (modSource||'') + '\n});\n'
 	return jsfile
 }

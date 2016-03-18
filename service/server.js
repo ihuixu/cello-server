@@ -47,21 +47,43 @@ module.exports = function(config){
 		var filePath = fileArray.join('/')
 
 		var modName = getName(filePath)
+		var modNames = modName.split('+')
+		console.log(modName, modNames)
 
 		switch(fileType){
 			case 'src' : 
-				if(singleJS[modName]){
-					send(200, singleJS[modName], 'js')
 
-				}else if(defaultJS[modName]){
-					send(200, file.getJSContent(defaultJS[modName]), 'js')
+				var sources = []
+				var len = modNames.length
 
-				}else{
-					commonJS(appConfig, modName)
-						.then(function(source){
-							send(200, source, 'js')
-						})
+				function done(){
+					len--
+					if(len) return;
+
+					send(200, sources.join('\n'), 'js')					
 				}
+
+				for(var i in modNames){
+					var name = modNames[i]
+
+					if(singleJS[name]){
+						sources.push(singleJS[name])
+						done()
+
+					}else if(defaultJS[name]){
+						sources.push(file.getJSContent(defaultJS[name]))
+						done()
+
+					}else{
+						commonJS(appConfig, name)
+							.then(function(source){
+								sources.push(source)
+								done()
+							})
+					}
+
+				}
+				
 				break;
 
 			case 'components' : 
