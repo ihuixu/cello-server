@@ -26,7 +26,8 @@ exports.apps = function(hostname, hostPath){
 exports.depends = function(hostname, hostPath){
 	var config = getConfig(hostname, hostPath, 'depends')
 	for(var key in config){
-		config[key] = config[key].join('+')
+		var configStr = config[key].join('+')
+		config[key] = configStr.replace(/\//g, '~')
 	}
 
 	return config
