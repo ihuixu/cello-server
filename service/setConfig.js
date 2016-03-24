@@ -25,8 +25,9 @@ exports.apps = function(hostname, hostPath){
 
 exports.depends = function(hostname, hostPath){
 	var config = getConfig(hostname, hostPath, 'depends')
-	config.global = config.global.join('+')
-console.log(config.global)
+	for(var key in config){
+		config[key] = config[key].join('+')
+	}
 
 	return config
 } 
