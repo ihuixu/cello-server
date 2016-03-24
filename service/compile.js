@@ -74,11 +74,21 @@ module.exports = function(config, callback){
 			file.mkDir(cssPath)
 		}
 
+		var depends = []
+		var globalDepends = appConfig.depends.global
+		if(globalDepends)
+			depends.push(globalDepends)
 
-		getJSSource(appConfig, appConfig.depends.global, function(source){
-			var content = UglifyJS.minify(source, {fromString: true}).code
-			mkFile(path.join(distPath, appConfig.depends.global+'.js'), content)
-		})
+		if(appConfig.depends.weixin)
+			depends.push(globalDepends+'+'+appConfig.depends.weixin)
+
+		for(var i in depends){
+			var depend = depends[i]
+			getJSSource(appConfig, depend, function(source){
+				var content = UglifyJS.minify(source, {fromString: true}).code
+				mkFile(path.join(distPath, depend+'.js'), content)
+			})
+		}
 
 		for(var modName in singleJS){
 			try{
