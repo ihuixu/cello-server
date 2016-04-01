@@ -9,7 +9,6 @@ if(!fs.existsSync(modulesPath)){
 
 exports.singleJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
-	, 'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
 	, 'querystring' : fs.readFileSync(path.join(__dirname, '../lib/querystring.js'), 'utf8')
 
 	, 'scrollStop' : fs.readFileSync(path.join(__dirname, '../lib/scrollStop.js'), 'utf8')
@@ -24,6 +23,7 @@ exports.singleJS = {
 }
 
 exports.defaultJS = {
+	'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
 }
 exports.defaultCSS = {
 	'cssresetwww': fs.readFileSync(path.join(__dirname, '../lib/less/cssresetwww.less'), 'utf8')

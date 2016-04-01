@@ -17,7 +17,6 @@ module.exports = function(config, mainPath){
 		}
 	}
 	var srcPath = path.join(config.hostPath, config.path.src)
-	var mainSource = file.getSource(path.join(srcPath, mainPath))
 
 	return new Promise(function(resolve, reject) {
 		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
@@ -25,82 +24,81 @@ module.exports = function(config, mainPath){
 		var code = []
 		var len = 0
 
-		getDepends(mainPath, mainSource)	
+		getDepends(mainPath)
+		depends.push(mainPath)
+
 
 		function done(){
-			if(len) return;
-
-			depends.push(mainPath)
-			code.push(file.getJSContent(mainPath, mainSource))
-			resolve(code.join('\n'));
+			if(len == 0)
+				resolve(code.join('\n'));
 		}
 
-		function getDepends(modPath, modSource){
-			modSource = modSource.replace(/(\/\/([^,;\n]*))/ig, '\n')
+		function getDepends(modPath){
+			len++
+			getCode(modPath).then(function(source){
+				code.push(source)
 
-			var requires = modSource.match(reg) || []
-			len += requires.length
-			done()
+				source = source.replace(/(\/\/([^,;\n]*))/ig, '\n')
+				var lines = source.split('\n')
+				lines.map(function(line){
+					var requiresInLine = line.match(reg)
+					if(requiresInLine){
+						requiresInLine.map(function(requireInLine){
+							try {
+								var evaFn = new Function('require' , requireInLine)
+								evaFn(require)
 
-			requires.map(function(line){
-				try {
-					var evaFn = new Function('require' , line)
-					evaFn(require)
+							}catch(err){
+								console.log(err, requireInLine)
+							}
+						})
+					}
+				})
 
-				}catch(err){
-					console.log(err, line)
-				}
-
+				len--
+				done()
 			})
 
 			function require(modName){
-				if (modName === modPath){
-					console.log('Error File "' + modPath + '" 调用自身.');
-					len--;
-					done()
+				if (!modName
+						|| modName == modPath 
+						|| modName == mainPath
+						|| depends.indexOf(modName) != -1
+						|| depends.indexOf(modName) != -1 
+						|| excludes.indexOf(modName) != -1 
+						)
 					return;
-				}
 
-				if (modName && depends.indexOf(modName) == -1 && excludes.indexOf(modName) == -1 && modName != mainPath){
-					depends.push(modName)
-
-					switch(path.extname(modName)){
-						case '.vue':
-							vueJS(config, modName).then(function(source){
-								code.push(file.getJSContent(modName, source))
-								getDepends(modName, source)
-
-								len--;
-								done()
-							})
-							break;
-
-						default:
-							var source = ''
-							if(singleJS[modName]){
-								source = singleJS[modName]
-
-							}else if(defaultJS[modName]){
-								source = file.getJSContent(defaultJS[modName])
-
-							}else{
-								source = file.getSource(path.join(srcPath, modName))
-							}
-
-							code.push(file.getJSContent(modName, source))
-							getDepends(modName, source)
-
-							len--;
-							done()
-							break;
-					}
-
-				}else{
-					len--;
-					done()
-				}
+				depends.push(modName)
+				getDepends(modName)
 			}
 		}
 	})
-} 
 
+	function getCode(modName){
+		return new Promise(function(resolve, reject) {
+			switch(path.extname(modName)){
+				case '.vue':
+					vueJS(config, modName).then(function(source){
+						resolve(file.getJSContent(modName, source))
+					})
+					break;
+
+				default:
+					var source = ''
+					if(singleJS[modName]){
+						source = singleJS[modName]
+
+					}else if(defaultJS[modName]){
+						source = file.getJSContent(modName, defaultJS[modName])
+
+					}else{
+						source = file.getJSContent(modName, file.getSource(path.join(srcPath, modName)))
+					}
+
+					resolve(source);
+					break;
+			}
+		})
+	}
+} 

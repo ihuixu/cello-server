@@ -1,6 +1,5 @@
 var http = require('http')
 var path = require('path')
-//var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
 var vueJS = require('../base/vueJS')
 var getConfig = require('./config')

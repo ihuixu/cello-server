@@ -27,7 +27,7 @@ module.exports = function(appConfig, modName, callback){
 			done()
 
 		}else if(defaultJS[name]){
-			sources.push(file.getJSContent(defaultJS[name]))
+			sources.push(file.getJSContent(name, defaultJS[name]))
 			done()
 
 		}else{
