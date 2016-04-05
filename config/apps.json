@@ -1,11 +1,10 @@
 {
-	"path" : {
-		"src" : "./script-ss/",
-		"dist" : "./script-min/",
-		"less" : "./less/",
-		"css" : "./css/",
-		"components" : "./components/"
-	},
-	"isDebug" : false
+  "path" : {
+    "src" : "./script-ss/",
+    "dist" : "./script-min/",
+    "less" : "./less/",
+    "css" : "./css/",
+    "components" : "./components/"
+  },
+  "isDebug" : false
 }
-
