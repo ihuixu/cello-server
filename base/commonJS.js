@@ -7,6 +7,7 @@ var getDepends = require('./getDepends')
 var getCode = require('./getCode')
 
 module.exports = function(config, mainPath){
+/*
 	var fns = []
 	for(var key in config.depends){
 		var exclude = config.depends[key].split('+')
@@ -22,6 +23,7 @@ module.exports = function(config, mainPath){
 	new Promise.all(fns).then(function(excludes){
 		console.log(excludes)
 	})
+*/
 
 
 	return new Promise(function(resolve, reject) {

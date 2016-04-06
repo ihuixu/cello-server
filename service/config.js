@@ -3,6 +3,8 @@ var path = require('path')
 var objectAssign = require('object-assign');
 var file = require('../base/file')
 var util = require('util')
+var Promise = require('bluebird')
+var getDepends = require('../base/getDepends')
 
 var defaultConfig = require('../config/server.json')
 var mustMake = ['src', 'less', 'components']
@@ -18,56 +20,76 @@ var settings = {
 	}
 }
 
-module.exports = function(config, opts){
+module.exports = function(globalConfig, opts){
 	opts = opts || {}
-	config = objectAssign({}, defaultConfig, config||{})
+	globalConfig = objectAssign({}, defaultConfig, globalConfig||{})
 
-	for(var hostname in config.hosts){
-		var hostPath = path.join(config.appPath, config.hosts[hostname])
-		var configPath = path.join(hostPath, 'config.json')
-
-		if(!fs.existsSync(hostPath)){
-			file.mkDir(hostPath)
-		}
-
-		if(/^\//ig.test(hostname)){
-			hostname = '127.0.0.1:' + config.onPort + hostname
-		}
-
-		var appConfig = getConfig(hostname, hostPath, 'apps')
-
-		appConfig.JCSTATIC_BASE = 'http://' + hostname + '/'
-		appConfig.hostPath = hostPath
-		appConfig.isDebug = !!opts.isDebug
-
-		if(typeof appConfig.version == "undefined" || opts.update){
-			appConfig.version = Date.parse(new Date)/1000 
-		}
-
-		var depends = getConfig(hostname, hostPath, 'depends')
-		depends.global.splice(0,0,'loader')
-		for(var key in depends){
-			depends[key] = depends[key].join('+')
-		}
-		console.log(depends)
-
-
-		appConfig.depends = depends
-
-		file.mkFile(configPath, JSON.stringify(appConfig, null, 4))
-
-		config.apps[hostname] = appConfig
-
-		mustMake.map(function(name){
-			var pathPath = path.join(hostPath, appConfig.path[name])
-			if(!fs.existsSync(pathPath)){
-				file.mkDir(pathPath)
-			}
-		})
-
+	var fns = []
+	for(var hostname in globalConfig.hosts){
+		fns.push(setConfig(hostname))
 	}
 
-	return config
+	return new Promise(function(resolve, reject){
+		new Promise.all(fns).then(function(res){
+			res.map(function(v){
+				globalConfig.apps[v.hostname] = v.config
+
+				file.mkFile(path.join(v.hostPath, 'config.json'), JSON.stringify(v.config, null, 4))
+
+			})
+
+			resolve(globalConfig)
+		})
+	})
+
+	function setConfig(hostname){
+		return new Promise(function(resolve, reject){ 
+			var hostPath = path.join(globalConfig.appPath, globalConfig.hosts[hostname])
+			if(!fs.existsSync(hostPath)){
+				file.mkDir(hostPath)
+			}
+			if(/^\//ig.test(hostname)){
+				hostname = '127.0.0.1:' + globalConfig.onPort + hostname
+			}
+
+			var config = getConfig(hostname, hostPath, 'apps')
+
+			config.JCSTATIC_BASE = 'http://' + hostname + '/'
+			config.hostPath = hostPath
+			config.isDebug = !!opts.isDebug
+
+			if(typeof config.version == "undefined" || opts.update){
+				config.version = Date.parse(new Date)/1000
+			}
+
+			mustMake.map(function(name){
+				var pathPath = path.join(hostPath, config.path[name])
+				if(!fs.existsSync(pathPath)){
+					file.mkDir(pathPath)
+				}
+			})
+
+			var dependsConfig = getConfig(hostname, hostPath, 'depends')
+			var fns = [], list = []
+			for(var key in dependsConfig){
+				list.push(key)
+				fns.push(getDepends(config, dependsConfig[key]))
+			}
+
+			new Promise.all(fns).then(function(res){
+				var depends = {}
+
+				for(var key in list){
+					depends[list[key]] = res[key].join('+')
+				}
+
+				config.depends = depends
+
+				console.log(depends)
+				resolve({hostname:hostname, hostPath:hostPath, config:config})
+			})
+		})
+	}
 }
 
 function getConfig(hostname, hostPath, type){
@@ -86,22 +108,28 @@ function getConfig(hostname, hostPath, type){
     try{
       config = JSON.parse(fs.readFileSync(configPath, 'utf8') || '{}')
     }catch(err){
-      console.log('error setConfig', err)
+      console.log('error set config', err)
     }
 
-    setConfig(newConfig, config)
+		for(var name in config){
+			if(util.isArray(config[name])){
+				if(!newConfig[name])
+					newConfig[name] = []
+
+				config[name].map(function(v){
+					newConfig[name].push(v)
+				})
+
+			}else if(typeof config[name] == "object"){
+				newConfig[name] = objectAssign({}, newConfig[name], config[name])
+
+			}else{
+				newConfig[name] = config[name]
+			}
+		}
   }
 
   return newConfig
 }
 
-function setConfig(newConfig, config){
-  for(var name in config){
-    if(typeof config[name] == "object" && !util.isArray(config[name])){
-      newConfig[name] = objectAssign({}, newConfig[name], config[name])
 
-    }else{
-      newConfig[name] = config[name]
-    }
-  }
-}

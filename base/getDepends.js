@@ -5,24 +5,32 @@ var Promise = require('bluebird')
 var file = require('./file')
 var getCode = require('./getCode')
 
-module.exports = function(config, mainPath){
+module.exports = function(config, mainPaths){
 	return new Promise(function(resolve, reject) {
 		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
 		var depends = []
 		var len = 0
 
-		getDepends(mainPath)
+		if(typeof mainPaths == 'string')
+			mainPaths = [mainPaths]
+
+		mainPaths = mainPaths || []
+
+		getDepends(mainPaths)
 
 		function done(){
 			if(len == 0){
-				depends.push(mainPath)
+				mainPaths.map(function(mainPath){
+					depends.push(mainPath)
+				})
+		
 				resolve(depends);
 			}
 		}
 
-		function getDepends(modPath){
+		function getDepends(modPaths){
 			len++
-			getCode(config, modPath).then(function(source){
+			getCode(config, modPaths).then(function(source){
 				source = source.join('\n')
 				source = source.replace(/(\/\/([^,;\n]*))/ig, '\n')
 				var lines = source.split('\n')
@@ -47,8 +55,8 @@ module.exports = function(config, mainPath){
 
 			function require(modName){
 				if (!modName
-						|| modName == modPath 
-						|| modName == mainPath
+						|| modPaths.indexOf(modName) != -1
+						|| mainPaths.indexOf(modName) != -1
 						|| depends.indexOf(modName) != -1
 						|| depends.indexOf(modName) != -1 
 						)
