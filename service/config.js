@@ -56,6 +56,7 @@ module.exports = function(globalConfig, opts){
 
 			config.JCSTATIC_BASE = 'http://' + hostname + '/'
 			config.hostPath = hostPath
+
 			config.isDebug = !!opts.isDebug
 
 			if(typeof config.version == "undefined" || opts.update){
@@ -77,15 +78,19 @@ module.exports = function(globalConfig, opts){
 			}
 
 			new Promise.all(fns).then(function(res){
-				var depends = {}
+				config.depends = {}
+
+				var depends = []
 
 				for(var key in list){
-					depends[list[key]] = res[key].join('+')
+					res[key].map(function(v){
+						if(depends.indexOf(v) == -1)
+							depends.push(v)
+					})
 				}
 
-				config.depends = depends
+				config.depends.global = depends.join('+')
 
-				console.log(depends)
 				resolve({hostname:hostname, hostPath:hostPath, config:config})
 			})
 		})

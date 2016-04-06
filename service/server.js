@@ -2,21 +2,16 @@ var http = require('http')
 var path = require('path')
 var commonCSS = require('../base/commonCSS')
 var commonJS = require('../base/commonJS')
-var vueJS = require('../base/vueJS')
 var getConfig = require('./config')
+var getName = require('../base/getName')
 var file = require('../base/file')
 
 var defaults = require('../base/defaults')
 var defaultCSS = defaults.defaultCSS
 
-function getName(urlpath, extname){
-	var names = urlpath.split('?')
-	return path.join(path.dirname(names[0], extname),  path.basename(names[0], extname))
-}
-
 module.exports = function(config){
 	var outputed = {}
-	getConfig(config).then(function(config){
+	getConfig(config, {isDebug:true, update:true}).then(function(config){
 		http.createServer(onRequest).listen(config.onPort || 80)
 
 		function onRequest(req, res){
@@ -38,8 +33,6 @@ module.exports = function(config){
 				return; 
 			}
 
-			var appConfig = config.apps[hostname]
-
 			var fileArray = requrl.split('/')
 			var fileOption = fileArray.splice(0,2).join('').split('~')
 			var fileType = fileOption[0]
@@ -49,18 +42,10 @@ module.exports = function(config){
 				case 'src' : 
 					var modName = getName(filePath, '.js')
 
-					commonJS(appConfig, modName).then(function(source){
+					commonJS(config.apps[hostname], modName).then(function(source){
 						send(200, source, 'js')					
 					})
 
-					break;
-
-				case 'components' : 
-					var modName = getName(filePath, '.js')
-
-					vueJS(appConfig, modName).then(function(source){
-						send(200, source, 'js')
-					})
 					break;
 
 				case 'less' : 
@@ -70,7 +55,7 @@ module.exports = function(config){
 						send(200, defaultCSS[modName], 'css')
 
 					}else{
-						commonCSS(appConfig, modName).then(function(source){
+						commonCSS(config.apps[hostname], modName).then(function(source){
 							send(200, source, 'css')
 						})
 					}

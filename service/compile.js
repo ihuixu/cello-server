@@ -1,199 +1,180 @@
 var http = require('http')
-var fs = require('fs')
 var path = require('path')
-var UglifyJS = require("uglify-js");
-var commonJS = require('../base/commonJS')
 var commonCSS = require('../base/commonCSS')
-var vueJS = require('../base/vueJS')
+var commonJS = require('../base/commonJS')
 var getConfig = require('./config')
+var getName = require('../base/getName')
 var file = require('../base/file')
+var Promise = require('bluebird')
+var fs = require('fs')
+var UglifyJS = require("uglify-js");
 
 var defaults = require('../base/defaults')
-var defaultJS = defaults.defaultJS
-var singleJS = defaults.singleJS
 var defaultCSS = defaults.defaultCSS
 
-function getName(urlpath){
-	var reg = new RegExp('^(\/(dist|css)\/)|(\.(js|css|less))', 'g')
-	var names = urlpath.replace(reg, '').split('?')
-	return names[0]
-}
+module.exports = function(globalConfig){
+	return new Promise(function(resolve, reject){
+		getConfig(globalConfig).then(function(globalConfig){
+			var fns = []
+			for(var hostname in globalConfig.apps){
+				var config = globalConfig.apps[hostname]
+				fns.push(compileJS(hostname, config))
+				fns.push(compileCSS(hostname, config))
+			}
 
-module.exports = function(config, callback){
-	config = getConfig(config) 
-
-	var wait = 0
-	var done = 0
-	var t
-
-	for(var hostname in config.apps){
-		compile(hostname)
-	}
-
-	function mkFile(filePath, content){
-		wait++
-
-		file.mkFile(filePath, content).then(function(){
-			done++
-
-			clearTimeout(t)
-			t = setTimeout(function(){
-
-				if(wait == done)
-					callback && callback()
-
-			}, 3000)
-
-		})
-	}
-
-	function compile(hostname){
-		var appConfig = config.apps[hostname]
-		var hostPath = appConfig.hostPath 
-
-		if(!fs.existsSync(hostPath)){
-			return;
-		}
-
-		var srcPath = path.join(hostPath, appConfig.path.src)
-		var distPath = path.join(hostPath, appConfig.path.dist)
-		
-		var lessPath = path.join(hostPath, appConfig.path.less)
-		var cssPath = path.join(hostPath, appConfig.path.css)
-
-
-		if(!fs.existsSync(distPath)){
-			file.mkDir(distPath)
-		}
-
-		if(!fs.existsSync(cssPath)){
-			file.mkDir(cssPath)
-		}
-
-		var depends = []
-		var globalDepends = appConfig.depends.global
-		if(globalDepends)
-			depends.push(globalDepends)
-
-		if(appConfig.depends.weixin)
-			depends.push(globalDepends+'+'+appConfig.depends.weixin)
-
-		for(var i in depends){
-			var depend = depends[i]
-			commonJS(appConfig, depend).then(function(source){
-				var content = UglifyJS.minify(source, {fromString: true}).code
-				mkFile(path.join(distPath, depend+'.js'), content)
+			new Promise.all(fns).then(function(res){
+				resolve(res)
 			})
-		}
 
-		for(var modName in singleJS){
-			try{
-				var content = UglifyJS.minify(singleJS[modName], {fromString: true}).code
-				mkFile(path.join(distPath, modName+'.js'), content)
+			function compileJS(hostname, config){
+				console.log('Start:' , 'COMPILE JS', '-->' , hostname)
 
-			}catch(err){
-				console.log('error compile', modName, err)
-			}
-		}
+				var srcPath = path.join(config.hostPath, config.path.src)
+				var distPath = path.join(config.hostPath, config.path.dist)
+				
+				if(!fs.existsSync(srcPath)){
+					file.mkDir(srcPath)
+				}
 
-		for(var modName in defaultJS){
-			try{
-				var content = UglifyJS.minify(file.getJSContent(modName, defaultJS[modName]), {fromString: true}).code
-				mkFile(path.join(distPath, modName+'.js'), content)
+				if(!fs.existsSync(distPath)){
+					file.mkDir(distPath)
+				}
 
-			}catch(err){
-				console.log('error compile', modName, err)
-			}
-		}
+				var len = 0
 
-		for(var i in defaultCSS){
-			mkFile(path.join(cssPath, i+'.css'), defaultCSS[i])
-		}
+				return new Promise(function(resolve, reject){
 
-		compileJS('./')
-		compileCSS('./')
+					function done(){
+						if(len == 0){
+							console.log('Success:' , 'COMPILE JS', '-->' , hostname)
+							resolve({hostname:hostname, type:'js'})
+						}
+					}
 
-		function compileJS(basePath){
-			if(!fs.existsSync(srcPath)){
-				file.mkDir(srcPath)
-			}
+					compile('./')
 
-			var files = file.readDir(path.join(srcPath, basePath))
+					function compile(basePath){
+						var files = file.readDir(path.join(srcPath, basePath))
 
-			files.map(function(filename){
-				var filePath = path.join(basePath, filename)
-				var distFilePath = path.join(distPath, filePath)
+						files.map(function(filename){
+							var filePath = path.join(basePath, filename)
+							var distFilePath = path.join(distPath, filePath)
 
-				switch(path.extname(filename)){
-					case '.js' :
-						var modName = getName(filePath)
-						commonJS(appConfig, modName).then(function(source){
-							var content = UglifyJS.minify(source, {fromString: true}).code
-							mkFile(distFilePath, content)
+							switch(path.extname(filename)){
+								case '.js' :
+									len++
+									var modName = getName(filePath, '.js')
+									commonJS(config, modName).then(function(source){
+										try{
+											var content = UglifyJS.minify(source, {fromString: true}).code
+										}catch(e){
+											console.log(modName)
+											console.log(e)
+
+											var content = ''
+										}
+										file.mkFile(distFilePath, content).then(function(){
+											len--
+											done()
+										})
+									})
+
+									break;
+				
+								case '.json' :
+									break;
+
+								default :
+									if(!fs.existsSync(distFilePath)){
+										file.mkDir(distFilePath)
+									}
+									compile(filePath)
+									break;
+							}
+
 						})
+					} 
 
-						break;
-	
-					case '.json' :
-						break;
-
-
-					default :
-						if(!fs.existsSync(distFilePath)){
-							file.mkDir(distFilePath)
-						}
-						compileJS(filePath)
-						break;
-
-				}
-
-			})
-		} 
-
-		function compileCSS(basePath){
-
-			if(!fs.existsSync(lessPath)){
-				file.mkDir(lessPath)
+				})
 			}
 
-			var files = file.readDir(path.join(lessPath, basePath))
+			function compileCSS(hostname, config){
+				console.log('Start:' , 'COMPILE CSS', '-->' , hostname)
 
-			files.map(function(filename){
-				var filePath = path.join(basePath, filename)
-				var distFilePath = path.join(cssPath, filePath)
+				var lessPath = path.join(config.hostPath, config.path.less)
+				var cssPath = path.join(config.hostPath, config.path.css)
 
-				switch(path.extname(filename)){
-					case '.less' :
-						var modName = getName(filePath)
-						var content = defaultCSS[modName]
-						distFilePath = path.join(cssPath, modName+'.css')
-
-						if(content){
-							mkFile(distFilePath, content)
-
-						}else{
-							commonCSS(appConfig, modName).then(function(source){
-								mkFile(distFilePath, source)
-							})
-						}
-
-						break;
-	
-					case '.json' :
-						break;
-
-					default :
-						if(!fs.existsSync(distFilePath)){
-							file.mkDir(distFilePath)
-						}
-						compileCSS(filePath)
-						break;
-
+				if(!fs.existsSync(lessPath)){
+					file.mkDir(lessPath)
 				}
 
-			})
-		}
-	}
+				if(!fs.existsSync(cssPath)){
+					file.mkDir(cssPath)
+				}
 
+				var len = 0
+
+				return new Promise(function(resolve, reject){
+
+					function done(){
+						if(len == 0){
+							console.log('Success:' , 'COMPILE CSS', '-->' , hostname)
+							resolve({hostname:hostname, type:'css'})
+						}
+					}
+
+					compile('./')
+
+					function compile(basePath){
+						var files = file.readDir(path.join(lessPath, basePath))
+
+						files.map(function(filename){
+							var filePath = path.join(basePath, filename)
+							var distFilePath = path.join(cssPath, filePath)
+
+							switch(path.extname(filename)){
+								case '.less' :
+									len++
+									var modName = getName(filePath, '.less')
+									var content = defaultCSS[modName]
+									distFilePath = path.join(cssPath, modName+'.css')
+
+									if(content){
+										file.mkFile(distFilePath, content).then(function(){
+											len--
+											done()
+										})
+
+
+									}else{
+										commonCSS(config, modName).then(function(source){
+											file.mkFile(distFilePath, content).then(function(){
+												len--
+												done()
+											})
+										})
+									}
+
+									break;
+				
+								case '.json' :
+									break;
+
+								default :
+									if(!fs.existsSync(distFilePath)){
+										file.mkDir(distFilePath)
+									}
+									compile(filePath)
+									break;
+
+							}
+
+						})
+					}
+
+				})
+			}
+		})
+	})
 }
 

@@ -6,6 +6,15 @@ var file = require('./file')
 var getCode = require('./getCode')
 
 module.exports = function(config, mainPaths){
+	var excludes = []
+	for(var key in config.depends){
+		var depends = config.depends[key].split('+')
+		depends.map(function(v){
+			if(excludes.indexOf(v) == -1)
+				excludes.push(v)
+		})
+	}
+
 	return new Promise(function(resolve, reject) {
 		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
 		var depends = []
@@ -21,7 +30,8 @@ module.exports = function(config, mainPaths){
 		function done(){
 			if(len == 0){
 				mainPaths.map(function(mainPath){
-					depends.push(mainPath)
+					if(depends.indexOf(mainPath) == -1)
+						depends.push(mainPath)
 				})
 		
 				resolve(depends);
@@ -59,6 +69,7 @@ module.exports = function(config, mainPaths){
 						|| mainPaths.indexOf(modName) != -1
 						|| depends.indexOf(modName) != -1
 						|| depends.indexOf(modName) != -1 
+						|| excludes.indexOf(modName) != -1 
 						)
 					return;
 
