@@ -31,7 +31,6 @@ startService() {
 	echo 'SERVICE START AT '` date +%Y/%m/%d-%T` >> $log
 	mkdir -p $logf
 	echo 'static service start , logfile:'$log	
-	cd $rf'../' && node debug.js
 	cd $rf'../' && nohup node server.js >> $log &
 
 }
