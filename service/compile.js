@@ -1,8 +1,8 @@
 var getConfig = require('./config')
 var Promise = require('bluebird')
 
-var compileJS = require('../base/compileJS')
-var compileCSS = require('../base/compileCSS')
+var compileJS = require('./compileJS')
+var compileCSS = require('./compileCSS')
 
 module.exports = function(config){
 	return new Promise(function(resolve, reject){
@@ -10,7 +10,7 @@ module.exports = function(config){
 			var fns = []
 			for(var hostname in config.apps){
 				fns.push(compileJS(hostname, config.apps[hostname]))
-//				fns.push(compileCSS(hostname, config.apps[hostname]))
+				fns.push(compileCSS(hostname, config.apps[hostname]))
 			}
 
 			new Promise.all(fns).then(function(res){

@@ -25,17 +25,19 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		compile('./'+config.depends.global+'.js')
-//		compile('./')
+		compile(config.depends.global+'.js', true)
+		compile()
 
-		function compile(basePath){
-			var distFilePath = path.join(distPath, basePath)
+		function compile(basePath, fouce){
+			basePath = basePath || ''
+			var fullPath = fouce ? basePath.replace(/\//g, '~') : basePath
+			var distFilePath = path.join(distPath, fullPath)
 
 			switch(path.extname(basePath)){
 				case '.js' :
 					len++
 					var modName = getName(basePath, '.js')
-					commonJS(config, modName).then(function(source){
+					commonJS(config, modName, fouce).then(function(source){
 						try{
 							var content = UglifyJS.minify(source, {fromString: true}).code
 

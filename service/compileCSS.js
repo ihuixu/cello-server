@@ -32,9 +32,10 @@ module.exports = function(hostname, config){
 			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i]).then(done)
 		}
 
-		compile('./')
+		compile()
 
 		function compile(basePath){
+			basePath = basePath || ''
 			var distFilePath = path.join(cssPath, basePath)
 
 			switch(path.extname(basePath)){
