@@ -25,8 +25,8 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		//compile('./'+config.depends.global+'.js')
-		compile('./')
+		compile('./'+config.depends.global+'.js')
+//		compile('./')
 
 		function compile(basePath){
 			var distFilePath = path.join(distPath, basePath)

@@ -21,10 +21,11 @@ module.exports = function(config, mainPaths){
 		var len = 0
 
 		if(typeof mainPaths == 'string')
-			mainPaths = [mainPaths]
+			mainPaths = mainPaths.split('+')
 
 		mainPaths = mainPaths || []
 
+		console.log(mainPaths)
 		getDepends(mainPaths)
 
 		function done(){

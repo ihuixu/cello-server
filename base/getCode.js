@@ -12,7 +12,7 @@ module.exports = function(config, modNames){
 	var fns = []
 
 	if(typeof modNames == 'string')
-		modNames = [modNames]
+		modNames = modNames.split('+')
 
 	modNames = modNames || []
 

@@ -10,7 +10,7 @@ module.exports = function(config){
 			var fns = []
 			for(var hostname in config.apps){
 				fns.push(compileJS(hostname, config.apps[hostname]))
-				fns.push(compileCSS(hostname, config.apps[hostname]))
+//				fns.push(compileCSS(hostname, config.apps[hostname]))
 			}
 
 			new Promise.all(fns).then(function(res){
