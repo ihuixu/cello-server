@@ -25,6 +25,7 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
+		compile('loader.js', true)
 		compile(config.depends.global+'.js', true)
 		compile()
 
