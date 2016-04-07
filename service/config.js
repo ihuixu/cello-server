@@ -58,6 +58,8 @@ module.exports = function(globalConfig, opts){
 			config.hostPath = hostPath
 
 			config.isDebug = !!opts.isDebug
+			config.depends = {}
+
 
 			if(typeof config.version == "undefined" || opts.update){
 				config.version = Date.parse(new Date)/1000
@@ -78,8 +80,6 @@ module.exports = function(globalConfig, opts){
 			}
 
 			new Promise.all(fns).then(function(res){
-				config.depends = {}
-
 				var depends = []
 
 				for(var key in list){
