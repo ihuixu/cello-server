@@ -65,8 +65,9 @@ module.exports = function(config, mainPaths, fouce){
 			})
 
 			function require(modName){
+
 				if (!modName
-					|| modPaths.indexOf(modName) != -1
+					|| modName == modPaths 
 					|| mainPaths.indexOf(modName) != -1
 					|| depends.indexOf(modName) != -1
 					|| (!fouce && excludes.indexOf(modName) != -1)

@@ -9,7 +9,6 @@ var getCode = require('./getCode')
 module.exports = function(config, mainPath, fouce){
 	return new Promise(function(resolve, reject) {
 		getDepends(config, mainPath, fouce).then(function(res){
-			console.log(res)
 			getCode(config, res.depends).then(function(source){
 				source = source.join('\n')
 				resolve(source);
