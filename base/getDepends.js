@@ -35,7 +35,7 @@ module.exports = function(config, mainPaths, fouce){
 						depends.push(mainPath)
 				})
 		
-				resolve(depends);
+				resolve({depends:depends, excludes:excludes});
 			}
 		}
 

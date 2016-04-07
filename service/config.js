@@ -83,7 +83,7 @@ module.exports = function(globalConfig, opts){
 				var depends = []
 
 				for(var key in list){
-					res[key].map(function(v){
+					res[key].depends.map(function(v){
 						if(depends.indexOf(v) == -1)
 							depends.push(v)
 					})
