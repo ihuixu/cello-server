@@ -5,7 +5,17 @@ var Promise = require('bluebird')
 var file = require('./file')
 var getCode = require('./getCode')
 
-module.exports = function(config, mainPaths){
+module.exports = function(config, mainPaths, fouce){
+	var excludes = []
+	for(var key in config.depends){
+		var depends = config.depends[key].split('+')
+		depends.map(function(v){
+			if(excludes.indexOf(v) == -1)
+				excludes.push(v)
+		})
+	}
+
+
 	return new Promise(function(resolve, reject) {
 		var reg = /\brequire\(["']([^,;\n]*)["']\)/ig
 		var depends = []
@@ -55,15 +65,16 @@ module.exports = function(config, mainPaths){
 			})
 
 			function require(modName){
-				if (modName
-						&& modPaths.indexOf(modName) == -1
-						&& mainPaths.indexOf(modName) == -1
-						&& depends.indexOf(modName) == -1
-						){
+				if (!modName
+					|| modPaths.indexOf(modName) != -1
+					|| mainPaths.indexOf(modName) != -1
+					|| depends.indexOf(modName) != -1
+					|| (!fouce && excludes.indexOf(modName) != -1)
+					)
+				return;
 
-					depends.push(modName)
-					getDepends(modName)
-				}
+				depends.push(modName)
+				getDepends(modName)
 			}
 		}
 	})

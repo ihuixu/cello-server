@@ -74,7 +74,7 @@ module.exports = function(globalConfig, opts){
 			var fns = [], list = []
 			for(var key in dependsConfig){
 				list.push(key)
-				fns.push(getDepends(config, dependsConfig[key]))
+				fns.push(getDepends(config, dependsConfig[key], true))
 			}
 
 			new Promise.all(fns).then(function(res){
