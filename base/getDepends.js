@@ -34,7 +34,7 @@ module.exports = function(config, mainPaths, fouce){
 					if(depends.indexOf(mainPath) == -1)
 						depends.push(mainPath)
 				})
-		
+
 				resolve({depends:depends, excludes:excludes});
 			}
 		}
@@ -44,8 +44,22 @@ module.exports = function(config, mainPaths, fouce){
 			getCode(config, modPaths).then(function(source){
 				source = source.join('\n')
 				source = source.replace(/(\/\/([^,;\n]*))/ig, '\n')
+				source = source.replace('/*', '\n/*\n')
+				source = source.replace('*/', '\n*/\n')
 				var lines = source.split('\n')
+				var flag = false
 				lines.map(function(line){
+					if(line.indexOf('/*') != -1){
+						flag = true
+					}
+
+					if(line.indexOf('*/') != -1){
+						flag = false
+					}
+
+					if(flag)
+						return;
+
 					var requiresInLine = line.match(reg)
 					if(requiresInLine){
 						requiresInLine.map(function(requireInLine){

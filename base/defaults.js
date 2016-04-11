@@ -9,13 +9,6 @@ if(!fs.existsSync(modulesPath)){
 
 exports.singleJS = {
 	'loader' : fs.readFileSync(path.join(__dirname, '../lib/loader.js'), 'utf8')
-	, 'vue' : fs.readFileSync(path.join(modulesPath, 'vue/dist/vue.min.js'), 'utf8')
-	, 'vue-touch' : fs.readFileSync(path.join(modulesPath, 'vue-touch/vue-touch.js'), 'utf8')
-	, 'vue-resource' : fs.readFileSync(path.join(modulesPath, 'vue-resource/dist/vue-resource.min.js'), 'utf8')
-	, 'hammerjs' : fs.readFileSync(path.join(modulesPath, 'hammerjs/hammer.min.js'), 'utf8')
-//	, 'zepto' : fs.readFileSync(path.join(modulesPath, 'zepto/zepto.min.js'), 'utf8')
-	, 'zepto' : fs.readFileSync(path.join(__dirname, '../lib/zepto.min.js'), 'utf8')
-	, 'jquery' : fs.readFileSync(path.join(modulesPath, 'jquery/dist/jquery.min.js'), 'utf8')
 }
 
 exports.defaultJS = {

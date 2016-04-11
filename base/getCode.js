@@ -5,8 +5,6 @@ var Promise = require('bluebird')
 var file = require('./file')
 
 var defaults = require('../base/defaults')
-var defaultJS = defaults.defaultJS
-var singleJS = defaults.singleJS
 
 module.exports = function(config, modNames){
 	var fns = []
@@ -31,14 +29,34 @@ module.exports = function(config, modNames){
 
 				default:
 					var source = ''
-					if(singleJS[modName]){
-						source = singleJS[modName]
 
-					}else if(defaultJS[modName]){
-						source = file.getJSContent(modName, defaultJS[modName])
+					if(defaults.singleJS[modName]){
+						source = defaults.singleJS[modName]
 
 					}else{
-						source = file.getJSContent(modName, file.getSource(path.join(config.hostPath, config.path.src, modName)))
+						if(defaults.defaultJS[modName]){
+							source = file.getJSContent(modName, defaults.defaultJS[modName])
+
+						}else{
+							var modNameArray = modName.split(path.sep)
+
+							if(config.corePath && modNameArray[0] == 'core'){
+								modNameArray.splice(0,1)
+
+								if(modNameArray[0] == 'package'){
+									var modPath = path.join(config.corePath, modNameArray.join(path.sep))
+									source = file.getSource(modPath)
+
+								}else{
+									var modPath = path.join(config.corePath, 'commonjs', modNameArray.join(path.sep))
+									source = file.getJSContent(modName, file.getSource(modPath))
+								}
+								
+							}else{
+								var modPath = path.join(config.hostPath, config.path.src, modName)
+								source = file.getJSContent(modName, file.getSource(modPath))
+							}
+						}
 					}
 
 					resolve(source);
