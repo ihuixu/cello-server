@@ -9,7 +9,7 @@ module.exports = function(config, mainPath, fouce){
 	return new Promise(function(resolve, reject) {
 		getDepends(config, mainPath, fouce).then(function(res){
 			getCode(config, res.depends).then(function(source){
-				source = source.join('\n')
+				source = source.join('\n;\n')
 				resolve(source);
 			})
 		})

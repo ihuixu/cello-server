@@ -25,7 +25,7 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		compile('loader.js', true)
+	//	compile('loader.js', true)
 		compile(config.depends.global+'.js', true)
 		compile()
 
@@ -40,7 +40,8 @@ module.exports = function(hostname, config){
 					var modName = getName(basePath, '.js')
 					commonJS(config, modName, fouce).then(function(source){
 						try{
-							var content = UglifyJS.minify(source, {fromString: true}).code
+							//var content = UglifyJS.minify(source, {fromString: true}).code
+							var content = source
 
 						}catch(e){
 							console.log(modName)

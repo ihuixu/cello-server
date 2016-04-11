@@ -1,5 +1,6 @@
 {
 	"appPath" : "../",
+	"corePath" : "../core",
 	"hosts" : {
 	},
 	"apps" : {

@@ -7,7 +7,6 @@ var fs = require('fs')
 var commonCSS = require('../base/commonCSS')
 
 var defaults = require('../base/defaults')
-var defaultCSS = defaults.defaultCSS
 
 module.exports = function(hostname, config){
 	console.log('Start:' , 'COMPILE CSS', '-->' , hostname)
@@ -27,14 +26,21 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		for(var modName in defaultCSS){
+		var coreCSS = ['core/cssresetm']
+		var corePath = path.join(cssPath, 'core')
+
+		if(!fs.existsSync(corePath)){
+			file.mkDir(corePath)
+		}
+
+		coreCSS.map(function(modName){
 			len++
 
 			var distFilePath = path.join(cssPath, modName+'.css')
 			commonCSS(config, modName).then(function(content){
 				file.mkFile(distFilePath, content).then(done)
 			})
-		}
+		})
 
 		compile()
 

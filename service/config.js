@@ -57,7 +57,6 @@ module.exports = function(globalConfig, opts){
 			config.JCSTATIC_BASE = 'http://' + hostname + '/'
 			config.hostPath = hostPath
 
-
 			var corePath = path.join(globalConfig.corePath)
 			if(!fs.existsSync(corePath)){
 				corePath = ''
@@ -66,7 +65,6 @@ module.exports = function(globalConfig, opts){
 
 			config.isDebug = !!opts.isDebug
 			config.depends = {}
-
 
 			if(typeof config.version == "undefined" || opts.update){
 				config.version = Date.parse(new Date)/1000

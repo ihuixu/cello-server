@@ -11,6 +11,7 @@ console.log(config)
 
 	var outputed = {}
 	getConfig(config, {isDebug:true, update:true}).then(function(config){
+console.log(config)
 		http.createServer(onRequest).listen(config.onPort || 80)
 
 		function onRequest(req, res){
