@@ -27,9 +27,13 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		for(var i in defaultCSS){
+		for(var modName in defaultCSS){
 			len++
-			file.mkFile(path.join(cssPath, i+'.css'), defaultCSS[i]).then(done)
+
+			var distFilePath = path.join(cssPath, modName+'.css')
+			commonCSS(config, modName).then(function(content){
+				file.mkFile(distFilePath, content).then(done)
+			})
 		}
 
 		compile()

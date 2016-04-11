@@ -6,10 +6,9 @@ var getConfig = require('./config')
 var getName = require('../base/getName')
 var file = require('../base/file')
 
-var defaults = require('../base/defaults')
-var defaultCSS = defaults.defaultCSS
-
 module.exports = function(config){
+console.log(config)
+
 	var outputed = {}
 	getConfig(config, {isDebug:true, update:true}).then(function(config){
 		http.createServer(onRequest).listen(config.onPort || 80)
@@ -51,14 +50,9 @@ module.exports = function(config){
 				case 'less' : 
 					var modName = getName(filePath, '.css')
 
-					if(defaultCSS[modName]){
-						send(200, defaultCSS[modName], 'css')
-
-					}else{
-						commonCSS(config.apps[hostname], modName).then(function(source){
-							send(200, source, 'css')
-						})
-					}
+					commonCSS(config.apps[hostname], modName).then(function(source){
+						send(200, source, 'css')
+					})
 					break;
 
 				default :
