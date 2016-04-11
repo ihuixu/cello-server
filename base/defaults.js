@@ -20,9 +20,6 @@ exports.singleJS = {
 
 exports.defaultJS = {
 	'loadStyle' : fs.readFileSync(path.join(__dirname, '../lib/loadStyle.js'), 'utf8')
-	, 'querystring' : fs.readFileSync(path.join(__dirname, '../lib/querystring.js'), 'utf8')
-	, 'scrollStop' : fs.readFileSync(path.join(__dirname, '../lib/scrollStop.js'), 'utf8')
-	, 'throttle' : fs.readFileSync(path.join(__dirname, '../lib/throttle.js'), 'utf8')
 }
 exports.defaultCSS = {
 	'cssresetwww': fs.readFileSync(path.join(__dirname, '../lib/less/cssresetwww.less'), 'utf8')
