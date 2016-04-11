@@ -1,7 +1,7 @@
 {
   "name": "cello-server",
   "description": "cello-server 静态服务 commonjs less components",
-  "version": "0.0.132",
+  "version": "0.0.136",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xh1021/cello-server.git"
@@ -16,23 +16,6 @@
     "ejs": "^2.3.4",
     "less": "^2.5.3",
     "object-assign": "^4.0.1",
-    "uglify-js": "^2.6.1",
-    "zepto": "^1.0",
-    "jquery": "^2.2.0",
-    "vue": "^1.0.16",
-    "vue-touch": "^1.0.2",
-    "vue-resource": "^0.7.0",
-    "hammerjs": "^2.0.6"
-  },
-  "readme": "# cello-server\n\n### Nginx\n```\nserver {\n\tlisten       80;\n\tserver_name  xhdev.cello.com;\n\tcharset utf-8;\n\n\taccess_log  logs/cello.access.log  main;\n\n\tlocation / {\n\t\tproxy_set_header Host               $http_host;\n\t\tproxy_set_header X-Real-IP          $remote_addr;\n\t\tproxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;\n\t\tproxy_pass http://127.0.0.1:6144;\n\t}\n}\n```\n",
-  "readmeFilename": "README.md",
-  "gitHead": "d6c1090aad53d15a0aa1f44dda0ab99969e4aaf6",
-  "bugs": {
-    "url": "https://github.com/xh1021/cello-server/issues"
-  },
-  "homepage": "https://github.com/xh1021/cello-server#readme",
-  "_id": "cello-server@0.0.132",
-  "scripts": {},
-  "_shasum": "36a406ac27c1c0cb8c298a88ca98426cf1a68da8",
-  "_from": "cello-server@0.0.132"
+    "uglify-js": "^2.6.1"
+  }
 }

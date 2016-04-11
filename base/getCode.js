@@ -1,5 +1,4 @@
 var path = require('path')
-var fs = require('fs')
 var vueJS = require('./vueJS')
 var Promise = require('bluebird')
 var file = require('./file')
