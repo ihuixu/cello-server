@@ -40,8 +40,8 @@ module.exports = function(hostname, config){
 					var modName = getName(basePath, '.js')
 					commonJS(config, modName, fouce).then(function(source){
 						try{
-							//var content = UglifyJS.minify(source, {fromString: true}).code
-							var content = source
+							var content = UglifyJS.minify(source, {fromString: true}).code
+							//var content = source
 
 						}catch(e){
 							console.log(modName)
