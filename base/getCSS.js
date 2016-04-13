@@ -8,6 +8,7 @@ module.exports = function(config, mainSource){
 
 	var opts = {
 		paths: [lessPath, corePath]
+		, compress: true
 	}
 
 	return new Promise(function(resolve, reject) {

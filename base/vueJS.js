@@ -10,7 +10,7 @@ var defaultLang = {
 }
 var defaultFn = {
 	less : function(config, content){
-		content = '@import "frame/atom.less";\n' + content
+		content = '@import "atom.less";\n' + content
 
 		return new Promise(function(resolve, reject){
 			getCSS(config, content).then(function(res){
