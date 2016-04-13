@@ -3,23 +3,6 @@ var fs = require('fs')
 var zlib = require('zlib')
 var Promise = require('bluebird')
 
-exports.getSource = function(filePath){
-	var filePaths = filePath.split('?')
-	filePath = filePaths[0]
-
-	if(!path.extname(filePath))
-		filePath += '.js'
-
-	return readFile(filePath)
-} 
-
-exports.getJSContent = function(modPath, modSource){
-	if(path.extname(modPath) == '.map')
-		return modSource||''
-
-	var jsfile = 'define("' + modPath + '",function(require, exports){\n' + (modSource||'') + '\n});\n'
-	return jsfile
-}
 
 function mkGzipFile(filePath, content){
 /*
@@ -74,4 +57,22 @@ exports.mkFile = mkFile
 exports.mkDir = mkDir
 exports.readFile = readFile
 exports.readDir = readDir
+
+exports.getSource = function(filePath){
+	var filePaths = filePath.split('?')
+	filePath = filePaths[0]
+
+	if(!path.extname(filePath))
+		filePath += '.js'
+
+	return readFile(filePath)
+} 
+
+exports.getJSContent = function(modPath, modSource){
+	if(path.extname(modPath) == '.map')
+		return modSource||''
+
+	var jsfile = 'define("' + modPath + '",function(require, exports){\n' + (modSource||'') + '\n});\n'
+	return jsfile
+}
 

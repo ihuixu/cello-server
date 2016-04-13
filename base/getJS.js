@@ -30,6 +30,7 @@ module.exports = function(config, modNames){
 
 				default:
 					var source = ''
+					var modNameArray = modName.split(path.sep)
 
 					if(defaults.singleJS[modName]){
 						source = defaults.singleJS[modName]
@@ -39,7 +40,6 @@ module.exports = function(config, modNames){
 							source = file.getJSContent(modName, defaults.defaultJS[modName])
 
 						}else{
-							var modNameArray = modName.split(path.sep)
 
 							if(config.corePath && modNameArray[0] == 'core'){
 								modNameArray.splice(0,1)

@@ -6,12 +6,19 @@ var file = require('./file')
 var tagnames = ['style', 'template', 'script']
 
 module.exports = function(config, mainPath){
-//	console.log(mainPath)
+	var mainPathArray = mainPath.split(path.sep)
+	var mainSource = ''
+	var modPath = ''
 
-	var componentsPath = path.join(config.hostPath, config.path.components)
+	if(config.corePath && mainPathArray[0] == 'core'){
+		mainPathArray.splice(0,1)
+		var modPath = path.join(config.corePath, 'components', mainPathArray.join(path.sep))
+		
+	}else{
+		var modPath = path.join(config.hostPath, config.path.components, mainPath)
+	}
 
-	var filePath = path.join(componentsPath, mainPath)
-	var mainSource = file.getSource(filePath)
+	mainSource = file.getSource(modPath)
 
 	var name = getName(mainPath)
 	var tags = getTags(mainSource) 
