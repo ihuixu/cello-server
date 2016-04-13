@@ -1,7 +1,7 @@
 var path = require('path')
 var Promise = require('bluebird')
 var file = require('./file')
-var getCode = require('./getCode')
+var getJS = require('./getJS')
 
 module.exports = function(config, mainPaths, fouce){
 	var excludes = []
@@ -26,20 +26,9 @@ module.exports = function(config, mainPaths, fouce){
 
 		getDepends(mainPaths)
 
-		function done(){
-			if(len == 0){
-				mainPaths.map(function(mainPath){
-					if(depends.indexOf(mainPath) == -1)
-						depends.push(mainPath)
-				})
-
-				resolve({depends:depends, excludes:excludes});
-			}
-		}
-
 		function getDepends(modPaths){
 			len++
-			getCode(config, modPaths).then(function(source){
+			getJS(config, modPaths).then(function(source){
 				source = source.join('\n')
 				source = source.replace(/(\/\/([^,;\n]*))/ig, '\n')
 				source = source.replace('/*', '\n/*\n')
@@ -73,11 +62,20 @@ module.exports = function(config, mainPaths, fouce){
 				})
 
 				len--
-				done()
+
+				if(len == 0){
+					mainPaths.map(function(mainPath){
+						if(depends.indexOf(mainPath) == -1)
+							depends.push(mainPath)
+					})
+
+					resolve({depends:depends, excludes:excludes});
+				}
+			}, function(err){
+				reject(err)
 			})
 
 			function require(modName){
-
 				if (!modName
 					|| modName == modPaths 
 					|| mainPaths.indexOf(modName) != -1

@@ -2,7 +2,7 @@ var path = require('path')
 var fs = require('fs')
 var Promise = require('bluebird')
 var file = require('./file')
-var less = require('less')
+var getCSS = require('./getCSS')
 
 module.exports = function(config, mainPath){
 	var modNameArray = mainPath.split(path.sep)
@@ -18,21 +18,6 @@ module.exports = function(config, mainPath){
 
 	var mainSource = file.getSource(mainFilepath)
 
-	return new Promise(function(resolve, reject) {
-		less.render(mainSource, {
-			paths:lessPath ? [lessPath] : []
-			, compress:true
-
-		}, function(error, output){
-			if(error){
-//				reject(error);
-				resolve(error);
-
-			}else{
-
-				resolve(output.css);
-			}
-		})
-	})
+	return getCSS(config, mainSource)
 } 
 

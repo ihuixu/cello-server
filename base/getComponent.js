@@ -2,25 +2,13 @@ var path = require('path')
 var fs = require('fs')
 var objectAssign = require('object-assign')
 var file = require('./file')
-var less = require('./less')
-var ejs = require('ejs')
 
 var tagnames = ['style', 'template', 'script']
-var defaultLang = {
-  style: 'less'
-  ,script: 'js'
-  ,template: 'ejs'
-}
-var method = {
-	'less' : less
-	, 'ejs' : function(block, name){
-		return ejs.render(block.content)
-	}
-}
 
 module.exports = function(config, mainPath){
+//	console.log(mainPath)
+
 	var componentsPath = path.join(config.hostPath, config.path.components)
-		, lessPath = path.join(config.hostPath, config.path.less)
 
 	var filePath = path.join(componentsPath, mainPath)
 	var mainSource = file.getSource(filePath)
@@ -33,12 +21,7 @@ module.exports = function(config, mainPath){
 	for(var tagname in tags){
 		components[tagname] = []
 		tags[tagname].map(function(block){
-			var lang = block.lang || defaultLang[tagname]
-			var res = method[lang]
-					? method[lang](block, name, lessPath)
-					: block.content
-
-			components[tagname].push(res)
+			components[tagname].push(block)
 		})
 	}
 	

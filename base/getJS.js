@@ -14,15 +14,17 @@ module.exports = function(config, modNames){
 	modNames = modNames || []
 
 	modNames.map(function(modName){
-		fns.push(getCode(modName))
+		fns.push(getJS(modName))
 	})
 		
-	function getCode(modName){
+	function getJS(modName){
 		return new Promise(function(resolve, reject){
 			switch(path.extname(modName)){
 				case '.vue':
 					vueJS(config, modName).then(function(source){
 						resolve(file.getJSContent(modName, source))
+					}, function(err){
+						reject(err)
 					})
 					break;
 

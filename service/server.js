@@ -11,7 +11,8 @@ console.log(config)
 
 	var outputed = {}
 	getConfig(config, {isDebug:true, update:true}).then(function(config){
-console.log(config)
+		//console.log(config)
+
 		http.createServer(onRequest).listen(config.onPort || 80)
 
 		function onRequest(req, res){
@@ -44,6 +45,9 @@ console.log(config)
 
 					commonJS(config.apps[hostname], modName).then(function(source){
 						send(200, source, 'js')					
+
+					}, function(err){
+						send(400, err)
 					})
 
 					break;
@@ -53,6 +57,9 @@ console.log(config)
 
 					commonCSS(config.apps[hostname], modName).then(function(source){
 						send(200, source, 'css')
+
+					}, function(err){
+						send(400, err)
 					})
 					break;
 
@@ -77,6 +84,9 @@ console.log(config)
 				});
 
 				outputed[hosturl] = lastModified
+
+				if(typeof content == 'object')
+					content = JSON.stringify(content)
 
 				res.write(content || '')
 				res.end()
