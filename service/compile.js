@@ -15,6 +15,9 @@ module.exports = function(config){
 
 			new Promise.all(fns).then(function(res){
 				resolve(res)
+
+			}, function(err){
+				reject(err)
 			})
 		})
 	})

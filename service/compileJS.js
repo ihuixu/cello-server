@@ -44,12 +44,15 @@ module.exports = function(hostname, config){
 							//var content = source
 
 						}catch(e){
-							console.log(modName)
-							console.log(e)
+							console.log(modName, e)
 
 							var content = ''
 						}
 						file.mkFile(distFilePath, content).then(done)
+
+					}, function(err){
+						console.log(modName, err)
+						done()
 					})
 					break;
 

@@ -39,6 +39,10 @@ module.exports = function(hostname, config){
 			var distFilePath = path.join(cssPath, modName+'.css')
 			commonCSS(config, modName).then(function(content){
 				file.mkFile(distFilePath, content).then(done)
+
+			}, function(err){
+				console.log(modName, err)
+				done()
 			})
 		})
 
@@ -56,6 +60,9 @@ module.exports = function(hostname, config){
 
 					commonCSS(config, modName).then(function(content){
 						file.mkFile(distFilePath, content).then(done)
+					}, function(err){
+						console.log(modName, err)
+						done()
 					})
 					break;
 
