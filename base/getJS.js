@@ -46,7 +46,11 @@ module.exports = function(config, modNames){
 
 								if(modNameArray[0] == 'package'){
 									var modPath = path.join(config.corePath, modNameArray.join(path.sep))
-									source = file.getSource(modPath)
+
+									if(modNameArray[2] == 'src')
+										source = file.getJSContent(modName, file.getSource(modPath))
+									else
+										source = file.getSource(modPath)
 
 								}else{
 									var modPath = path.join(config.corePath, 'script-ss', modNameArray.join(path.sep))
