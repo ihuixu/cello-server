@@ -26,7 +26,7 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
-		var coreCSS = ['core/cssresetm']
+		var coreCSS = ['cssresetm', 'cssresetwww']
 		var corePath = path.join(cssPath, 'core')
 
 		if(!fs.existsSync(corePath)){
