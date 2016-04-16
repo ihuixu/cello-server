@@ -3,6 +3,7 @@ var fs = require('fs')
 var Promise = require('bluebird')
 var getComponent = require('./getComponent')
 var getCSS = require('./getCSS')
+var getName = require('../base/getName')
 
 var tagnames = ['style', 'template', 'script']
 var defaultLang = {
@@ -57,14 +58,14 @@ module.exports = function(config, mainPath){
 			//var template = JSON.stringify('<div class="' + name + '">' + source['template'].join('') + '</div>')
 			var script = source['script'].join('') || 'return {}'
 
-			var code = []
-			code.push('require("loadStyle")("'+ name + '",' + style +');')
-			code.push('var opts = (function(){' + script + '})();')
-			code.push('opts.template = ' + template)
+			var code = 'require("loadStyle")("'+ name + '",' + style +');\n'
+							+ 'var opts = (function(){' + script + '})();\n'
+							+ 'opts.template = ' + template + ';\n'
 
 			resolve({
-				opts : code.join('\n') + '\nreturn opts;'
-				, source : code.join('\n') + '\nreturn Vue.component("'+ name +'", opts)'
+				opts : code + '\nreturn opts;' 
+//				, source : code + '\nreturn Vue.component("'+ name +'", function(resolve){$.getScript("http://127.0.0.1:6002/fex/glk/component/'+ getName(mainPath, '.vue') + '.js' +'", function(res){console.log(res)});resolve(opts);})' 
+				, source : code + '\nreturn Vue.component("'+ name +'", opts)' 
 			})
 
 		}, function(err){
