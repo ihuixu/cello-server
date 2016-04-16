@@ -45,7 +45,7 @@ module.exports = function(config){
 					var modName = getName(filePath, '.js')
 
 					vueJS(config.apps[hostname], modName + '.vue').then(function(res){
-						send(200, res.source, 'js')					
+						send(200, res.opts, 'js')					
 					}, function(err){
 						send(400, err)
 					})
