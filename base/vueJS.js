@@ -61,9 +61,11 @@ module.exports = function(config, mainPath){
 			code.push('require("loadStyle")("'+ name + '",' + style +');')
 			code.push('var opts = (function(){' + script + '})();')
 			code.push('opts.template = ' + template)
-			code.push('return Vue.component("'+ name +'", opts)')
 
-			resolve(code.join('\n'));
+			resolve({
+				opts : code.join('\n') + '\nreturn opts;'
+				, source : code.join('\n') + '\nreturn Vue.component("'+ name +'", opts)'
+			})
 
 		}, function(err){
 			reject(err)

@@ -2,12 +2,13 @@ var http = require('http')
 var path = require('path')
 var commonCSS = require('../base/commonCSS')
 var commonJS = require('../base/commonJS')
+var vueJS = require('../base/vueJS')
 var getConfig = require('./config')
 var getName = require('../base/getName')
 var file = require('../base/file')
 
 module.exports = function(config){
-console.log(config)
+//console.log(config)
 
 	var outputed = {}
 	getConfig(config, {isDebug:true, update:true}).then(function(config){
@@ -40,6 +41,17 @@ console.log(config)
 			var filePath = fileArray.join('/')
 
 			switch(fileType){
+				case 'component' : 
+					var modName = getName(filePath, '.js')
+
+					vueJS(config.apps[hostname], modName + '.vue').then(function(res){
+						send(200, res.source, 'js')					
+					}, function(err){
+						send(400, err)
+					})
+
+					break;
+
 				case 'src' : 
 					var modName = getName(filePath, '.js')
 

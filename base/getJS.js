@@ -21,8 +21,8 @@ module.exports = function(config, modNames){
 		return new Promise(function(resolve, reject){
 			switch(path.extname(modName)){
 				case '.vue':
-					vueJS(config, modName).then(function(source){
-						resolve(file.getJSContent(modName, source))
+					vueJS(config, modName).then(function(res){
+						resolve(file.getJSContent(modName, res.source))
 					}, function(err){
 						reject(err)
 					})
