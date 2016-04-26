@@ -13,7 +13,7 @@ module.exports = function(hostname, config){
 	var srcPath = path.join(config.hostPath, config.path.src)
 	var distPath = path.join(config.hostPath, config.path.dist)
 	
-	var corePath = path.join(config.hostPath, config.path.src)
+	var distCorePath = path.join(distPath, 'core')
 
 	if(!fs.existsSync(srcPath)){
 		file.mkDir(srcPath)
@@ -23,6 +23,10 @@ module.exports = function(hostname, config){
 		file.mkDir(distPath)
 	}
 
+	if(!fs.existsSync(distCorePath)){
+		file.mkDir(distCorePath)
+	}
+
 	var len = 0
 
 	return new Promise(function(resolve, reject){
@@ -30,8 +34,8 @@ module.exports = function(hostname, config){
 	//	compile('loader.js', true)
 		compile(srcPath, distPath, config.depends.global+'.js', true)
 		compile(srcPath, distPath)
-		compile(path.join(config.corePath, 'package'), path.join(distPath, 'core/package'))
-		compile(path.join(config.corePath, 'script-ss'), path.join(distPath, 'core/script-ss'))
+		compile(path.join(config.corePath, 'package'), path.join(distCorePath, 'package'))
+		compile(path.join(config.corePath, 'script-ss'), path.join(distCorePath, 'script-ss'))
 
 		function compile(srcPath, distPath, basePath, fouce){
 			basePath = basePath || ''
