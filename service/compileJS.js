@@ -13,6 +13,8 @@ module.exports = function(hostname, config){
 	var srcPath = path.join(config.hostPath, config.path.src)
 	var distPath = path.join(config.hostPath, config.path.dist)
 	
+	var corePath = path.join(config.hostPath, config.path.src)
+
 	if(!fs.existsSync(srcPath)){
 		file.mkDir(srcPath)
 	}
@@ -26,10 +28,12 @@ module.exports = function(hostname, config){
 	return new Promise(function(resolve, reject){
 
 	//	compile('loader.js', true)
-		compile(config.depends.global+'.js', true)
-		compile()
+		compile(srcPath, distPath, config.depends.global+'.js', true)
+		compile(srcPath, distPath)
+		compile(path.join(config.corePath, 'package'), path.join(distPath, 'core/package'))
+		compile(path.join(config.corePath, 'script-ss'), path.join(distPath, 'core/script-ss'))
 
-		function compile(basePath, fouce){
+		function compile(srcPath, distPath, basePath, fouce){
 			basePath = basePath || ''
 			var fullPath = fouce ? basePath.replace(/\//g, '~') : basePath
 			var distFilePath = path.join(distPath, fullPath)
@@ -67,7 +71,7 @@ module.exports = function(hostname, config){
 					var files = file.readDir(path.join(srcPath, basePath))
 					files.map(function(filename){
 						var filePath = path.join(basePath, filename)
-						compile(filePath)
+						compile(srcPath, distPath, filePath)
 					})
 					break;
 			}
