@@ -30,36 +30,19 @@ module.exports = function(config, mainPaths, fouce){
 			len++
 			getJS(config, modPaths).then(function(source){
 				source = source.join('\n')
-				source = source.replace(/(\/\/([^,;\n]*))/ig, '\n')
-				source = source.replace('/*', '\n/*\n')
-				source = source.replace('*/', '\n*/\n')
-				var lines = source.split('\n')
-				var flag = false
-				lines.map(function(line){
-					if(line.indexOf('/*') != -1){
-						flag = true
-					}
+				source = source.replace(/(\/\*[\w\'\s\r\n\*]*\*\/)|(\/\/[\w\s\']*)/g,'') 
+				var requiresInSource = source.match(reg)
+				if(requiresInSource){
+					requiresInSource.map(function(requireInLine){
+						try {
+							var evaFn = new Function('require' , requireInLine)
+							evaFn(require)
 
-					if(line.indexOf('*/') != -1){
-						flag = false
-					}
-
-					if(flag)
-						return;
-
-					var requiresInLine = line.match(reg)
-					if(requiresInLine){
-						requiresInLine.map(function(requireInLine){
-							try {
-								var evaFn = new Function('require' , requireInLine)
-								evaFn(require)
-
-							}catch(err){
-								console.log(err, requireInLine)
-							}
-						})
-					}
-				})
+						}catch(err){
+							console.log(err, requireInLine)
+						}
+					})
+				}
 
 				len--
 
