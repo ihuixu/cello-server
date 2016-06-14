@@ -22,10 +22,11 @@ module.exports = function(config){
 			var requrl = ''
 
 			for(var name in config.apps){
-				var reg = new RegExp(name, 'ig')
+				var reg = new RegExp(name + '/', 'ig')
 				if(reg.test(hosturl)){
 					hostname = name
-					requrl = hosturl.replace(reg, '')
+					requrl = '/' + hosturl.replace(reg, '')
+					break;
 				}
 			}
 
