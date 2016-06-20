@@ -4,6 +4,7 @@
     "dist" : "./script-min/",
     "less" : "./less/",
     "css" : "./css/",
+    "open" : "./open/",
     "components" : "./components/"
   },
   "isDebug" : false

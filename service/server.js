@@ -2,6 +2,7 @@ var http = require('http')
 var path = require('path')
 var commonCSS = require('../base/commonCSS')
 var commonJS = require('../base/commonJS')
+var commonOPEN = require('../base/commonOPEN')
 var vueJS = require('../base/vueJS')
 var getConfig = require('./config')
 var getName = require('../base/getName')
@@ -76,6 +77,45 @@ module.exports = function(config){
 					})
 					break;
 
+				case 'open' : 
+					var modName = getName(filePath)
+
+					var modPath = path.join(config.apps[hostname].hostPath, config.apps[hostname].path.open, modName)
+
+					var modNameArray = modName.split(path.sep)
+
+					if(config.apps[hostname].corePath && modNameArray[0] == 'core'){
+						modNameArray.splice(0,1)
+
+						modPath = path.join(config.apps[hostname].corePath, 'open', modNameArray.join(path.sep))
+					}
+
+					var source = file.readFile(modPath)
+
+					var extname = path.extname(modName)
+
+					switch(extname){
+						case '.js' :
+							send(200, source, 'js')
+
+							break;
+
+						case '.css' :
+							send(200, source, 'css')
+
+							break;
+
+						case '.html' :
+							send(200, source, 'html')
+
+							break;
+
+						default :
+							break;
+					}
+
+					break;
+
 				default :
 					send(200)
 					break;
@@ -89,6 +129,7 @@ module.exports = function(config){
 				var contentType = 'text/plain'
 				if ('css' == filetype) contentType = 'text/css'
 				else if ('js' == filetype) contentType = 'application/javascript'
+				else if ('html' == filetype) contentType = 'text/html'
 
 				res.writeHeader(state ,{
 						"Content-Type" :  contentType +';charset=utf-8',

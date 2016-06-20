@@ -7,7 +7,7 @@ var Promise = require('bluebird')
 var getDepends = require('../base/getDepends')
 
 var defaultConfig = require('../config/server.json')
-var mustMake = ['src', 'less', 'components']
+var mustMake = ['src', 'less', 'components', 'open']
 
 var settings = {
 	apps : {
