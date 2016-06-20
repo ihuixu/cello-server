@@ -7,6 +7,16 @@ var getConfig = require('./config')
 var getName = require('../base/getName')
 var file = require('../base/file')
 
+var contentTypes = {
+	default : 'text/plain'
+	, '.css' : 'text/css'
+	, '.html' : 'text/html'
+	, '.js' : 'application/javascript'
+	, '.jpeg' : 'image/jpeg'
+	, '.jpg' : 'image/jpeg'
+	, '.png' : 'image/png'
+}
+
 module.exports = function(config){
 //console.log(config)
 
@@ -46,7 +56,7 @@ module.exports = function(config){
 					var modName = getName(filePath, '.js')
 
 					vueJS(config.apps[hostname], modName + '.vue').then(function(res){
-						send(200, file.getJSContent(modName, res.opts), 'js')					
+						send(200, file.getJSContent(modName, res.opts), '.js')					
 					}, function(err){
 						send(400, err)
 					})
@@ -57,7 +67,7 @@ module.exports = function(config){
 					var modName = getName(filePath, '.js')
 
 					commonJS(config.apps[hostname], modName).then(function(source){
-						send(200, source, 'js')					
+						send(200, source, '.js')					
 
 					}, function(err){
 						send(400, err)
@@ -69,7 +79,7 @@ module.exports = function(config){
 					var modName = getName(filePath, '.css')
 
 					commonCSS(config.apps[hostname], modName).then(function(source){
-						send(200, source, 'css')
+						send(200, source, '.css')
 
 					}, function(err){
 						send(400, err)
@@ -93,25 +103,7 @@ module.exports = function(config){
 
 					var extname = path.extname(modName)
 
-					switch(extname){
-						case '.js' :
-							send(200, source, 'js')
-
-							break;
-
-						case '.css' :
-							send(200, source, 'css')
-
-							break;
-
-						case '.html' :
-							send(200, source, 'html')
-
-							break;
-
-						default :
-							break;
-					}
+					send(200, source, extname)
 
 					break;
 
@@ -125,10 +117,7 @@ module.exports = function(config){
 				var lastModified = outputed[hosturl] || (new Date).toUTCString()
 				var expires = new Date(now.getFullYear() , now.getMonth() , now.getDate()+30)
 
-				var contentType = 'text/plain'
-				if ('css' == filetype) contentType = 'text/css'
-				else if ('js' == filetype) contentType = 'application/javascript'
-				else if ('html' == filetype) contentType = 'text/html'
+				var contentType = contentTypes[filetype] || contentTypes['default']
 
 				res.writeHeader(state ,{
 						"Content-Type" :  contentType +';charset=utf-8',
