@@ -62,9 +62,8 @@ exports.getSource = function(filePath){
 	var filePaths = filePath.split('?')
 	filePath = filePaths[0]
 
-	console.log(path.extname(filePath))
-
-	if(path.extname(filePath) != '.js')
+	var extname = path.extname(filePath)
+	if(extname != '.js' && extname != '.vue')
 		filePath += '.js'
 
 	return readFile(filePath)
