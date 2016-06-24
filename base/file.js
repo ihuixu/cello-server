@@ -62,7 +62,9 @@ exports.getSource = function(filePath){
 	var filePaths = filePath.split('?')
 	filePath = filePaths[0]
 
-	if(!path.extname(filePath))
+	console.log(path.extname(filePath))
+
+	if(path.extname(filePath) != '.js')
 		filePath += '.js'
 
 	return readFile(filePath)
