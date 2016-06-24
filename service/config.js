@@ -54,7 +54,7 @@ module.exports = function(globalConfig, opts){
 
 			var config = getConfig(hostname, hostPath, 'apps')
 
-			config.JCSTATIC_BASE = 'http://' + hostname + '/'
+			config.JCSTATIC_BASE = '//' + hostname + '/'
 			config.hostPath = hostPath
 
 			var corePath = path.join(globalConfig.corePath)
