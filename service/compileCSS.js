@@ -11,6 +11,7 @@ module.exports = function(hostname, config){
 
 	var srcPath = path.join(config.hostPath, config.path.less)
 	var distPath = path.join(config.hostPath, config.path.css)
+	var distCorePath = path.join(distPath, 'core')
 
 	if(!fs.existsSync(srcPath)){
 		file.mkDir(srcPath)
@@ -20,10 +21,14 @@ module.exports = function(hostname, config){
 		file.mkDir(distPath)
 	}
 
+	if(!fs.existsSync(distCorePath)){
+		file.mkDir(distCorePath)
+	}
+
 	var len = 0
 
 	return new Promise(function(resolve, reject){
-		compile(path.join(config.corePath, 'less'), distPath)
+		compile(path.join(config.corePath, 'less'), distCorePath)
 		compile(srcPath, distPath)
 
 		function compile(srcPath, distPath, basePath, fouce){
