@@ -6,57 +6,35 @@ var fs = require('fs')
 
 var commonCSS = require('../base/commonCSS')
 
-var defaults = require('../base/defaults')
-
 module.exports = function(hostname, config){
 	console.log('Start:' , 'COMPILE CSS', '-->' , hostname)
 
-	var lessPath = path.join(config.hostPath, config.path.less)
-	var cssPath = path.join(config.hostPath, config.path.css)
+	var srcPath = path.join(config.hostPath, config.path.less)
+	var distPath = path.join(config.hostPath, config.path.css)
 
-	if(!fs.existsSync(lessPath)){
-		file.mkDir(lessPath)
+	if(!fs.existsSync(srcPath)){
+		file.mkDir(srcPath)
 	}
 
-	if(!fs.existsSync(cssPath)){
-		file.mkDir(cssPath)
+	if(!fs.existsSync(distPath)){
+		file.mkDir(distPath)
 	}
 
 	var len = 0
 
 	return new Promise(function(resolve, reject){
+		compile(path.join(config.corePath, 'less'), distPath)
+		compile(srcPath, distPath)
 
-		var coreCSS = ['cssresetm', 'cssresetwww']
-		var corePath = path.join(cssPath, 'core')
-
-		if(!fs.existsSync(corePath)){
-			file.mkDir(corePath)
-		}
-
-		coreCSS.map(function(modName){
-			len++
-
-			var distFilePath = path.join(cssPath, modName+'.css')
-			commonCSS(config, modName).then(function(content){
-				file.mkFile(distFilePath, content).then(done)
-
-			}, function(err){
-				console.log(modName, err)
-				done()
-			})
-		})
-
-		compile()
-
-		function compile(basePath){
+		function compile(srcPath, distPath, basePath, fouce){
 			basePath = basePath || ''
-			var distFilePath = path.join(cssPath, basePath)
+			var distFilePath = path.join(distPath, basePath)
 
 			switch(path.extname(basePath)){
 				case '.less' :
 					len++
 					var modName = getName(basePath, '.less')
-					distFilePath = path.join(cssPath, modName+'.css')
+					distFilePath = path.join(distPath, modName+'.css')
 
 					commonCSS(config, modName).then(function(content){
 						file.mkFile(distFilePath, content).then(done)
@@ -74,10 +52,10 @@ module.exports = function(hostname, config){
 						file.mkDir(distFilePath)
 					}
 
-					var files = file.readDir(path.join(lessPath, basePath))
+					var files = file.readDir(path.join(srcPath, basePath))
 					files.map(function(filename){
 						var filePath = path.join(basePath, filename)
-						compile(filePath)
+						compile(srcPath, distPath, filePath)
 					})
 					break;
 			}

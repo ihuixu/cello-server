@@ -12,7 +12,6 @@ module.exports = function(hostname, config){
 
 	var srcPath = path.join(config.hostPath, config.path.src)
 	var distPath = path.join(config.hostPath, config.path.dist)
-	
 	var distCorePath = path.join(distPath, 'core')
 
 	if(!fs.existsSync(srcPath)){
@@ -34,8 +33,8 @@ module.exports = function(hostname, config){
 	//	compile('loader.js', true)
 		compile(srcPath, distPath, config.depends.global+'.js', true)
 		compile(srcPath, distPath)
-		compile(path.join(config.corePath, 'package'), path.join(distCorePath, 'package'))
-		compile(path.join(config.corePath, 'script-ss'), path.join(distCorePath, 'script-ss'))
+//		compile(path.join(config.corePath, 'package'), path.join(distCorePath, 'package'))
+//		compile(path.join(config.corePath, 'script-ss'), path.join(distCorePath, 'script-ss'))
 
 		function compile(srcPath, distPath, basePath, fouce){
 			basePath = basePath || ''
