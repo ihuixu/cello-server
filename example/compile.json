@@ -1,0 +1,7 @@
+{
+	"appPath": "../../",
+	"corePath": "../../core",
+	"hosts": {
+    "demo.cello.com": "cello-static"
+	}
+}

@@ -1,0 +1,4 @@
+.*/*
+/node_modules
+/cmd/pids
+*.log
