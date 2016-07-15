@@ -1,8 +1,8 @@
 var server = require('cello-server')
-var config = require('./config.json')
+var config = require('./compile.json')
 
 server.compile(config).then(function(res){
-  console.log('COMPILE DONE.')
+	console.log('COMPILE DONE.')
+}, function(err){
+	console.log('COMPILE FAIL!')
 })
-
-
