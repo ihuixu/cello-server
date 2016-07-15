@@ -14,7 +14,7 @@ script_path=${script_path##*/}
 stopService() {
 	echo 'stop server'
 	if [ ! -f $rf'pids' ]; then
-		for proc in `ps -ef | grep node | grep server.js | awk '{print $2}'`; do
+		for proc in `ps -ef | grep node | grep index.js | awk '{print $2}'`; do
 			kill   $proc ; done
 	else
 		cat $rf'pids' | while read line; do
@@ -31,7 +31,7 @@ startService() {
 	echo 'SERVICE START AT '` date +%Y/%m/%d-%T` >> $log
 	mkdir -p $logf
 	echo 'static service start , logfile:'$log	
-	cd $rf'../' && nohup node server.js >> $log &
+	cd $rf'../' && nohup node index.js >> $log &
 
 }
 
