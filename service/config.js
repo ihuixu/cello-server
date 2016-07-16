@@ -22,17 +22,17 @@ var settings = {
 
 function getIPAddress(){  
 	var interfaces = require('os').networkInterfaces();  
+	var address = '127.0.0.1'
 	for(var devName in interfaces){  
 		var iface = interfaces[devName];  
-		var address = '127.0.0.1'
 		for(var i=0;i<iface.length;i++){  
 			var alias = iface[i];  
 			if(alias.family === 'IPv4' && !alias.internal){  
 				address = alias.address
 			}  
 		}  
-		return address;  
 	}  
+	return address;  
 }  
 
 module.exports = function(globalConfig, opts){
