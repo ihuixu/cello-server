@@ -20,6 +20,21 @@ var settings = {
 	}
 }
 
+function getIPAddress(){  
+	var interfaces = require('os').networkInterfaces();  
+	for(var devName in interfaces){  
+		var iface = interfaces[devName];  
+		var address = '127.0.0.1'
+		for(var i=0;i<iface.length;i++){  
+			var alias = iface[i];  
+			if(alias.family === 'IPv4' && !alias.internal){  
+				address = alias.address
+			}  
+		}  
+		return address;  
+	}  
+}  
+
 module.exports = function(globalConfig, opts){
 	opts = opts || {}
 	globalConfig = objectAssign({}, defaultConfig, globalConfig||{})
@@ -49,7 +64,7 @@ module.exports = function(globalConfig, opts){
 				file.mkDir(hostPath)
 			}
 			if(/^\//ig.test(hostname)){
-				hostname = '127.0.0.1:' + globalConfig.onPort + hostname
+				hostname = getIPAddress() + ':' + globalConfig.onPort + hostname
 			}
 
 			var config = getConfig(hostname, hostPath, 'apps')
