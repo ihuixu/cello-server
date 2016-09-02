@@ -3,6 +3,7 @@ var getName = require('../base/getName')
 var file = require('../base/file')
 var Promise = require('bluebird')
 var fs = require('fs')
+var crypto = require('crypto')
 
 var commonJS = require('../base/commonJS')
 var UglifyJS = require("uglify-js");
@@ -30,16 +31,23 @@ module.exports = function(hostname, config){
 
 	return new Promise(function(resolve, reject){
 
+		var filename = config.depends.global
+		var hasher = crypto.createHash("md5");
+		hasher.update(filename)
+		var hashmsg = hasher.digest('hex')
+
+		console.log(filename, hashmsg, 'compile!!!!')
+
 	//	compile('loader.js', true)
-		compile(srcPath, distPath, config.depends.global+'.js', true)
+		compile(srcPath, distPath, filename+'.js', true, hashmsg+'.js')
 		compile(srcPath, distPath)
 //		compile(path.join(config.corePath, 'package'), path.join(distCorePath, 'package'))
 //		compile(path.join(config.corePath, 'script-ss'), path.join(distCorePath, 'script-ss'))
 
-		function compile(srcPath, distPath, basePath, fouce){
+		function compile(srcPath, distPath, basePath, fouce, hashPath){
 			basePath = basePath || ''
 			var fullPath = fouce ? basePath.replace(/\//g, '~') : basePath
-			var distFilePath = path.join(distPath, fullPath)
+			var distFilePath = path.join(distPath, hashPath || fullPath)
 
 			switch(path.extname(basePath)){
 				case '.js' :
