@@ -47,15 +47,17 @@ function getTags(mainSource){
 
 	tagnames.map(function(name){
 		tags[name] = []
-		blockRegArray.push('<(\\b' + name + '\\b)(.*?)>((\\n|.)*?)<\\/\\b(' + name + ')\\b>')
+		blockRegArray.push('<(\\b' + name + '\\b)(.*?)>((\\n|.)*?)<\\/\\b' + name + '\\b>')
 	})
 	var blockRegStr = blockRegArray.join('|')
+
 	var attrRegStr = '(\\S+)=("[^"]*"|\'[^\']*\'|(\\S+))?|(\\S+)'
 
 	var blocks = mainSource.match(new RegExp(blockRegStr, 'ig')) 
+
 	blocks && blocks.map(function(block){
 		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
-		var type = (blockArray[1] ? 0 : (blockArray[6] ? 1 : (blockArray[11] ? 2 : -1))) *5
+		var type = (blockArray[1] ? 0 : (blockArray[5] ? 1 : (blockArray[9] ? 2 : -1))) *4
 
 		var name = blockArray[1+type]
 		var attrs = blockArray[2+type].match(new RegExp(attrRegStr, 'ig'))
