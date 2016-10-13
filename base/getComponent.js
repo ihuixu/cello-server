@@ -47,7 +47,7 @@ function getTags(mainSource){
 
 	tagnames.map(function(name){
 		tags[name] = []
-		blockRegArray.push('<(\\b' + name + '\\b)(.*?)>((\\n|.)*?)<\\/\\b' + name + '\\b>')
+		blockRegArray.push('<(\\b' + name + '\\b) ?(.*)>((\\n|.)*?)<\\/\\b' + name + '\\b>')
 	})
 	var blockRegStr = blockRegArray.join('|')
 
