@@ -53,10 +53,14 @@ function getTags(mainSource){
 
 	var attrRegStr = '(\\S+)=("[^"]*"|\'[^\']*\'|(\\S+))?|(\\S+)'
 
-	var blocks = mainSource.match(new RegExp(blockRegStr, 'ig')) 
+	var regBlock = new RegExp(blockRegStr, 'ig')
+	var regDetail = new RegExp(blockRegStr, 'i')
+
+	var blocks = mainSource.match(regBlock) 
 
 	blocks && blocks.map(function(block){
-		var blockArray = block.match(new RegExp(blockRegStr, 'i'))
+		var blockArray = block.match(regDetail)
+
 		var type = (blockArray[1] ? 0 : (blockArray[5] ? 1 : (blockArray[9] ? 2 : -1))) *4
 
 		var name = blockArray[1+type]
