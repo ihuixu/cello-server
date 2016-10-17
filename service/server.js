@@ -3,9 +3,9 @@ var path = require('path')
 var commonCSS = require('../base/commonCSS')
 var commonJS = require('../base/commonJS')
 var vueJS = require('../base/vueJS')
-var getConfig = require('./config')
 var getName = require('../base/getName')
 var file = require('../base/file')
+var getConfig = require('./config')
 
 var contentTypes = {
 	default : 'text/plain'
@@ -41,7 +41,7 @@ module.exports = function(config){
 			}
 
 			if(!hostname){
-				console.log('error', 'Not exist: config.hosts['+ hostname +']!')
+				console.log('error', 'Not exist: config.hosts['+ hostname +']!', req.url)
 				send(400, 'Not exist: config.hosts['+ hostname +']!')
 				return; 
 			}
